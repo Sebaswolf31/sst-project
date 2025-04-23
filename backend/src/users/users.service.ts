@@ -1,26 +1,59 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(
+    @InjectRepository(User)
+    private readonly usersRepository: Repository<User>,
+  ) {}
+
+  async findAll(companyId?: string): Promise<User[]> {
+    const query = this.usersRepository.createQueryBuilder('user');
+
+    if (companyId) {
+      query.where('user.companyId = :companyId', { companyId });
+    }
+
+    return query.getMany();
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findOne(id: string): Promise<User> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['company'],
+    });
+
+    if (!user) {
+      throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
+    }
+
+    return user;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.findOne(id);
+    return this.usersRepository.save({ ...user, ...updateUserDto });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async remove(id: string): Promise<void> {
+    const user = await this.findOne(id);
+    await this.usersRepository.remove(user);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  // Método para AuthService
+  async findByEmail(email: string): Promise<User | undefined> {
+    const user = await this.usersRepository.findOne({
+      where: { email },
+      select: ['id', 'email', 'password', 'role', 'company'],
+    });
+    return user ?? undefined;
   }
 }

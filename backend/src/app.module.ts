@@ -13,6 +13,7 @@ import typeormConfig from './config/typeorm';
   imports: [
     UsersModule,
     AuthModule,
+    CompanyModule,
 
     ConfigModule.forRoot({
       isGlobal: true,
@@ -33,8 +34,6 @@ import typeormConfig from './config/typeorm';
         return dbConfig;
       },
     }),
-
-    CompanyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

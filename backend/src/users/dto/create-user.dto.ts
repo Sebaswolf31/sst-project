@@ -47,7 +47,7 @@ export class CreateUserDto {
   role: UserRole;
 
   @IsNotEmpty()
-  companyId: number; // ID de la empresa asignada
+  companyId: string; // ID de la empresa asignada
 }
 
 export class LoginUserDto {
