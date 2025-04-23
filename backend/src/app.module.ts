@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt/dist/jwt.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { CompanyModule } from './company/company.module';
 import typeormConfig from './config/typeorm';
 
 @Module({
@@ -32,6 +33,8 @@ import typeormConfig from './config/typeorm';
         return dbConfig;
       },
     }),
+
+    CompanyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

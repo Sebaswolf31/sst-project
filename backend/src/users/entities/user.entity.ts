@@ -6,7 +6,7 @@ import {
   OneToMany,
   Unique,
 } from 'typeorm';
-//import { Company } from '../../company/entities/company.entity';
+import { Company } from '../../company/entities/company.entity';
 //import { Risk } from '../../risks/entities/risk.entity';
 //import { Inspection } from '../../inspections/entities/inspection.entity';
 //import { Document } from '../../documents/entities/document.entity';
@@ -47,12 +47,12 @@ export class User {
   role: UserRole;
 
   // Relación con Company
-  //@ManyToOne(() => Company, (company) => company.users, {
-  //nullable: true,  // Permite companyId = NULL
-  //  onDelete: 'CASCADE', // Si se elimina la empresa, se eliminan sus usuarios
-  //})
-  //company: Company;
-  //
+  @ManyToOne(() => Company, (company) => company.users, {
+  nullable: true,  // Permite companyId = NULL
+    onDelete: 'CASCADE', // Si se elimina la empresa, se eliminan sus usuarios
+  })
+  company: Company;
+  
   //// Relaciones con otras entidades (creaciones)
   //@OneToMany(() => Risk, (risk) => risk.createdBy)
   //risks: Risk[];
