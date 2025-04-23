@@ -19,8 +19,7 @@ export class AuthService {
   ) {}
 
   async createUser(user: CreateUserDto) {
-    const { email, password, confirmPassword, ...userWithoutConfirmation } =
-      user;
+    const { email, password, confirmPassword, companyId, ...rest } = user;
 
     const existingUser = await this.usersRepository.findOne({
       where: { email },
@@ -31,14 +30,15 @@ export class AuthService {
     }
 
     const hashPassword = await bcrypt.hash(password, 10);
-
-    const newUser = await this.usersRepository.save({
-      ...userWithoutConfirmation,
+    const userEntity = this.usersRepository.create({
+      ...rest,
       email,
       password: hashPassword,
+      companyId,
     });
 
-    const { password: _, ...userWithoutPassword } = newUser;
+    const saved = await this.usersRepository.save(userEntity);
+    const { password: _, ...userWithoutPassword } = saved;
     return userWithoutPassword;
   }
 
