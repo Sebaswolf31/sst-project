@@ -21,8 +21,8 @@ export enum UserRole {
 @Unique(['email']) // Asegura que el email sea único
 @Unique(['identification']) // Identificación única por usuario
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   name: string;
@@ -52,14 +52,14 @@ export class User {
   //  onDelete: 'CASCADE', // Si se elimina la empresa, se eliminan sus usuarios
   //})
   //company: Company;
-//
+  //
   //// Relaciones con otras entidades (creaciones)
   //@OneToMany(() => Risk, (risk) => risk.createdBy)
   //risks: Risk[];
-//
+  //
   //@OneToMany(() => Inspection, (inspection) => inspection.createdBy)
   //inspections: Inspection[];
-//
+  //
   //@OneToMany(() => Document, (document) => document.uploadedBy)
   //documents: Document[];
 }

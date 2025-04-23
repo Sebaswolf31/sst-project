@@ -10,6 +10,9 @@ import typeormConfig from './config/typeorm';
 
 @Module({
   imports: [
+    UsersModule,
+    AuthModule,
+
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeormConfig],
