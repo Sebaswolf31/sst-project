@@ -32,10 +32,6 @@ import typeormConfig from './config/typeorm';
         return dbConfig;
       },
     }),
-
-    UsersModule,
-
-    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

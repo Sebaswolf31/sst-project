@@ -2,6 +2,7 @@ import {
   Injectable,
   BadRequestException,
   ConflictException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto, LoginUserDto } from '../users/dto/create-user.dto';
 import { Repository } from 'typeorm';
@@ -42,29 +43,31 @@ export class AuthService {
   }
 
   async singin(credentials: LoginUserDto) {
-    const { email, password } = credentials;
-    const existingUser = await this.usersRepository.findOne({
-      where: { email },
+    const user = await this.usersRepository.findOne({
+      where: { email: credentials.email },
+      relations: ['company'], // Asegurar carga de relación cuando exista
     });
-    if (!existingUser) {
-      throw new BadRequestException('Error en las credenciales');
+
+    if (!user || !(await bcrypt.compare(credentials.password, user.password))) {
+      throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    const passwordEqual = await bcrypt.compare(password, existingUser.password);
-    if (!passwordEqual) {
-      throw new BadRequestException('Error en las credenciales');
-    }
-
-    const userPayload = {
-      id: existingUser.id,
-      email: existingUser.email,
+    // Payload con datos esenciales para permisos
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      companyId: user.company?.id || null, // Asegurar companyId
     };
 
-    const token = this.jwtService.sign(userPayload);
-
     return {
-      token,
-      message: 'Ingreso exitoso',
+      access_token: this.jwtService.sign(payload),
+      user: {
+        id: user.id,
+        name: user.name,
+        role: user.role,
+        companyId: user.company?.id,
+      },
     };
   }
 }

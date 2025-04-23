@@ -1,7 +1,12 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+// src/auth/guards/roles.guard.ts
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Observable } from 'rxjs';
-import { UserRole } from 'src/users/entities/user.entity';
+import { UserRole } from '../../users/entities/user.entity';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -13,16 +18,27 @@ export class RolesGuard implements CanActivate {
       context.getHandler(),
     );
 
+    // Si no hay roles requeridos, permitir acceso
     if (!requiredRoles) return true;
 
-    const { user } = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
+
+    if (!user) {
+      throw new UnauthorizedException('Usuario no autenticado');
+    }
 
     // SUPERADMIN tiene acceso total
     if (user.role === UserRole.SUPERADMIN) return true;
 
-    // ADMIN y OPERATOR deben pertenecer a una empresa
-    if (!user.companyId) return false;
+    // Verificar si el rol del usuario está permitido
+    const hasRole = requiredRoles.some((role) => user.role === role);
 
-    return requiredRoles.includes(user.role);
+    // ADMIN y OPERATOR deben pertenecer a una empresa
+    if (!hasRole || (user.role !== UserRole.SUPERADMIN && !user.companyId)) {
+      throw new UnauthorizedException('No tienes permisos para esta acción');
+    }
+
+    return true;
   }
 }
