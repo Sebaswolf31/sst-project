@@ -8,9 +8,9 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Company } from '../../company/entities/company.entity';
-//import { Risk } from '../../risks/entities/risk.entity';
-//import { Inspection } from '../../inspections/entities/inspection.entity';
-//import { Document } from '../../documents/entities/document.entity';
+import { Risk } from '../../risk/entities/risk.entity';
+import { Inspection } from '../../inspection/entities/inspection.entity';
+import { Document } from '../../document/entities/document.entity';
 
 export enum UserRole {
   SUPERADMIN = 'superadmin',
@@ -58,13 +58,13 @@ export class User {
   @JoinColumn({ name: 'companyId' }) // ← declara la columna FK
   company: Company;
 
-  //// Relaciones con otras entidades (creaciones)
-  //@OneToMany(() => Risk, (risk) => risk.createdBy)
-  //risks: Risk[];
-  //
-  //@OneToMany(() => Inspection, (inspection) => inspection.createdBy)
-  //inspections: Inspection[];
-  //
-  //@OneToMany(() => Document, (document) => document.uploadedBy)
-  //documents: Document[];
+  // Relaciones con otras entidades (creaciones)
+  @OneToMany(() => Risk, (risk) => risk.createdBy)
+  risks: Risk[];
+  
+  @OneToMany(() => Inspection, (inspection) => inspection.createdBy)
+  inspections: Inspection[];
+  
+  @OneToMany(() => Document, (document) => document.uploadedBy)
+  documents: Document[];
 }

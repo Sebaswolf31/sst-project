@@ -7,13 +7,9 @@ import { Company } from 'src/company/entities/company.entity';
 import { User } from 'src/users/entities/user.entity';
 
 @Module({
-   imports: [
-    TypeOrmModule.forFeature([Document]),
-    Company,
-    User,
-  ],
+  imports: [TypeOrmModule.forFeature([Document, Company, User])],
   controllers: [DocumentController],
   providers: [DocumentService],
-   exports: [DocumentService], // Para usar en otros módulos
+  exports: [DocumentService], // Para usar en otros módulos
 })
 export class DocumentModule {}

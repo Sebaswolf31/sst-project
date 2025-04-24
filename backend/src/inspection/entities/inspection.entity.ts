@@ -32,9 +32,9 @@ export class Inspection {
   company: Company;
 
   @Column({ type: 'uuid' })
-  performedById: string;
+  createdById: string;
 
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'performedById' })
-  performedBy: User;
+  @ManyToOne(() => User, (user) => user.inspections)
+  @JoinColumn({ name: 'createdById' })
+  createdBy: User;
 }

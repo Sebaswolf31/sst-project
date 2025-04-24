@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import typeormConfig from './config/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -10,7 +11,7 @@ import { CompanyModule } from './company/company.module';
 import { RiskModule } from './risk/risk.module';
 import { InspectionModule } from './inspection/inspection.module';
 import { DocumentModule } from './document/document.module';
-import typeormConfig from './config/typeorm';
+
 
 @Module({
   imports: [
