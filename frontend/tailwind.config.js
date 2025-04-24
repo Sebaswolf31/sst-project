@@ -12,9 +12,9 @@ module.exports = {
         sans: ["'Nunito'", "sans-serif"],
       },
       colors: {
-        blueP: "#123D67",
-        blueLight: "#3A4971",
-        greenP: "#74BE8B",
+        blueP: "#175699",
+        blueLight: "#188FA3",
+        greenP: "#41B495",
       },
     },
   },

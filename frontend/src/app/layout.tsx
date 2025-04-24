@@ -3,6 +3,7 @@ import { Nunito } from "next/font/google";
 import "./globals.css";
 import VisibleWrapper from "./wrappers/visibleWraper";
 import Footer from "./components/footer";
+import Navbar from "./components/navbar";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -23,6 +24,9 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={` antialiased ${nunito.variable}`}>
+        <VisibleWrapper>
+          <Navbar />
+        </VisibleWrapper>
         {children}
         <VisibleWrapper>
           <Footer />
