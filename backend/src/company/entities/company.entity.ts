@@ -1,5 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { Risk } from '../../risk/entities/risk.entity';
+import { Inspection } from 'src/inspection/entities/inspection.entity';
+import { Document } from 'src/document/entities/document.entity';
 
 @Entity()
 export class Company {
@@ -11,4 +14,13 @@ export class Company {
 
   @OneToMany(() => User, (user) => user.company)
   users: User[];
+
+  @OneToMany(() => Risk, (risk) => risk.company)
+  risks: Risk[];
+
+  @OneToMany(() => Inspection, (insp) => insp.company)
+  inspections: Inspection[];
+
+  @OneToMany(() => Document, (doc) => doc.company)
+  documents: Document[];
 }
