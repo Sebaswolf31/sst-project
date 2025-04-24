@@ -1,20 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Nunito } from "next/font/google";
+import { Nunito } from "next/font/google";
 import "./globals.css";
+import VisibleWrapper from "./wrappers/visibleWraper";
+import Footer from "./components/footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 const nunito = Nunito({
   variable: "--font-nunito",
   subsets: ["latin"],
-  weight: ["400", "600", "700"], // puedes ajustar los pesos que necesites
+  weight: ["400", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -28,11 +21,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased ${nunito.variable}`}
-      >
+    <html lang="es">
+      <body className={` antialiased ${nunito.variable}`}>
         {children}
+        <VisibleWrapper>
+          <Footer />
+        </VisibleWrapper>
       </body>
     </html>
   );
