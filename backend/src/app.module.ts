@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import typeormConfig from './config/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -7,13 +8,19 @@ import { JwtModule } from '@nestjs/jwt/dist/jwt.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { CompanyModule } from './company/company.module';
-import typeormConfig from './config/typeorm';
+import { RiskModule } from './risk/risk.module';
+import { InspectionModule } from './inspection/inspection.module';
+import { DocumentModule } from './document/document.module';
+
 
 @Module({
   imports: [
     UsersModule,
     AuthModule,
     CompanyModule,
+    RiskModule,
+    InspectionModule,
+    DocumentModule,
 
     ConfigModule.forRoot({
       isGlobal: true,
