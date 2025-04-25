@@ -4,6 +4,8 @@ import "./globals.css";
 import VisibleWrapper from "./wrappers/visibleWraper";
 import Footer from "./components/footer";
 import Navbar from "./components/navbar";
+import { AuthProvider } from "./contexts/authContext";
+import { Toaster } from "react-hot-toast";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -24,13 +26,31 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={` antialiased ${nunito.variable}`}>
-        <VisibleWrapper>
-          <Navbar />
-        </VisibleWrapper>
-        {children}
-        <VisibleWrapper>
-          <Footer />
-        </VisibleWrapper>
+        <AuthProvider>
+          <VisibleWrapper>
+            <Navbar />
+          </VisibleWrapper>
+          <Toaster
+            toastOptions={{
+              success: {
+                style: {
+                  background: "green",
+                },
+              },
+              error: {
+                style: {
+                  background: "red",
+                },
+              },
+              position: "top-center",
+            }}
+          />
+
+          {children}
+          <VisibleWrapper>
+            <Footer />
+          </VisibleWrapper>
+        </AuthProvider>
       </body>
     </html>
   );

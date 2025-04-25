@@ -11,7 +11,7 @@ import { IoClose } from "react-icons/io5";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="z-40  top-4 bg-blueP">
+    <div className="z-40 text-white top-4 bg-blueP">
       <nav className="flex items-center justify-between p-4 mx-auto shadow-xl text-foreground ring-2 ring-gray-300 ring-opacity-100 max-w-7xl bg-opacity-80 ">
         <div className="flex items-center gap-8 pt-2">
           <Link href={routes.home}>
@@ -40,32 +40,21 @@ const Navbar = () => {
             <Link href={routes.home} className="transition hover:text-verde">
               Nosotros
             </Link>
-            <Link
-              href={routes.home}
-              className="text-center transition hover:text-verde"
-            >
-              Planes y Rutinas
-            </Link>
+            <Link href={routes.home}>Planes y Rutinas</Link>
 
-            <Link
-              href={routes.home}
-              className="text-center transition hover:text-verde"
-            >
-              Casos de Éxito
-            </Link>
-            <Link href={routes.home} className="transition hover:text-verde">
-              Tarifas
-            </Link>
+            <Link href={routes.home}>Casos de Éxito</Link>
+            <Link href={routes.home}>Tarifas</Link>
 
-            <Link href={routes.home} className="transition hover:text-verde">
-              Eventos
-            </Link>
+            <Link href={routes.home}>Eventos</Link>
 
             <Link href={routes.home} className="transition hover:text-verde">
               Comunidad
             </Link>
             <div className="flex items-center justify-end mt-4 lg:mt-0"></div>
           </div>
+          <Link href={routes.home} className="transition hover:text-verde">
+            Login
+          </Link>
         </div>
       </nav>
     </div>
