@@ -58,5 +58,5 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
 
   @IsOptional()
   @IsNotEmpty()
-  companyId: string; // ID de la empresa asignada
+  companyId?: string; // ID de la empresa asignada
 }
