@@ -38,17 +38,17 @@ const Navbar = () => {
               Inicio
             </Link>
             <Link href={routes.home} className="transition hover:text-verde">
-              Nosotros
+              Pagina 1
             </Link>
-            <Link href={routes.home}>Planes y Rutinas</Link>
+            <Link href={routes.home}>Pagina 2</Link>
 
-            <Link href={routes.home}>Casos de Éxito</Link>
-            <Link href={routes.home}>Tarifas</Link>
+            <Link href={routes.home}>Pagina 3</Link>
+            <Link href={routes.home}>Pagina 4</Link>
 
-            <Link href={routes.home}>Eventos</Link>
+            <Link href={routes.home}>Pagina 5</Link>
 
             <Link href={routes.home} className="transition hover:text-verde">
-              Comunidad
+              Pagina 6
             </Link>
             <div className="flex items-center justify-end mt-4 lg:mt-0"></div>
           </div>
