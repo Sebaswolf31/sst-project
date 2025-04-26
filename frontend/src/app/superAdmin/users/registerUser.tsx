@@ -29,8 +29,11 @@ const validationSchema = Yup.object().shape({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Las contraseñas deben coincidir")
     .required("La confirmación de la contraseña es obligatoria"),
-  phone: Yup.number()
-    .typeError("El teléfono debe ser un número")
+  phone: Yup.string()
+    .matches(
+      /^\+(\d{1,3})\d{9}$/,
+      "Teléfono debe ser un número válido (ej: +573001234567)"
+    )
     .required("El teléfono es obligatorio"),
   role: Yup.string().required("El rol es obligatorio"),
   companyId: Yup.string().required("El Id de la empresa es requerido"),
@@ -39,9 +42,11 @@ const RegisterUser = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleOnSubmit = async (values: IUser) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleOnSubmit = async (values: IUser, { resetForm }: any) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("access_token");
+      console.log(token, "token");
       if (!token) {
         toast.error("No hay token disponible");
         return;
@@ -59,9 +64,10 @@ const RegisterUser = () => {
       console.log("Datos enviados al backend:", formattedUserData);
       await registerService(formattedUserData, token);
       toast.success("¡Usuario registrado correctamente!");
+      resetForm();
     } catch (error: unknown) {
       if (error instanceof Error) {
-        toast.error("Usuario Registrado");
+        toast.error(error.message);
       } else {
         toast.error("Ocurrió un error inesperado");
       }
@@ -181,7 +187,7 @@ const RegisterUser = () => {
               <div>
                 <Field
                   name="phone"
-                  type="number"
+                  type="string"
                   placeholder="Teléfono"
                   className="w-full p-3 text-gray-800 rounded-lg shadow-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-greenP"
                 />

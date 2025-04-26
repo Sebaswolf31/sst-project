@@ -31,12 +31,15 @@ const Login = () => {
     { setSubmitting }: FormikHelpers<IUserLogin>
   ) => {
     try {
-      const formattedUserData = {
+      const userData = {
         email: values.email,
         password: values.password,
       };
-      const res = await loginService(formattedUserData);
-      if (res?.token) {
+      console.log(userData);
+      const res = await loginService(userData);
+      console.log(res);
+      if (res?.access_token) {
+        localStorage.setItem("access_token", res.access_token);
         toast.success("Inicio de sesión exitoso");
         saveUserData(res);
         setTimeout(() => {
