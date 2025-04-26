@@ -14,7 +14,7 @@ interface AuthContextType {
   user: IUser | null;
   isAuth: boolean;
   token?: string | null;
-  saveUserData: (data: { user: IUser; token: string }) => void;
+  saveUserData: (data: { user: IUser; access_token: string }) => void;
   resetUserData: () => void;
   setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
 }
@@ -27,41 +27,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuth, setIsAuth] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const saveUserData = (data: { user: IUser; token: string }) => {
+  const saveUserData = (data: { user: IUser; access_token: string }) => {
     setUser(data.user);
     setIsAuth(true);
-    setToken(data.token);
+    setToken(data.access_token);
     localStorage.setItem("user", JSON.stringify(data.user));
-    localStorage.setItem("token", data.token);
+    localStorage.setItem("access_token", data.access_token);
   };
-
   const resetUserData = () => {
     setUser(null);
     setIsAuth(false);
     setToken(null);
     localStorage.removeItem("user");
-    localStorage.removeItem("token");
+    localStorage.removeItem("access_token");
   };
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    const storedToken = localStorage.getItem("token");
-
+    const storedToken = localStorage.getItem("access_token");
+    console.log(storedUser, " user guardados");
     if (storedToken && storedToken.split(".").length === 3) {
       try {
         const decodedToken: any = jwtDecode(storedToken);
         const currentTime = Math.floor(Date.now() / 1000);
 
-        if (decodedToken.exp && decodedToken.exp > currentTime) {
-          const parsedUser: IUser = storedUser
-            ? JSON.parse(storedUser)
-            : {
-                id: decodedToken.id,
-                email: decodedToken.email,
-                name: decodedToken.name || "",
-                profileImage: decodedToken.profileImage || "",
-              };
-
+        if (decodedToken.exp && decodedToken.exp > currentTime && storedUser) {
+          const parsedUser: IUser = JSON.parse(storedUser);
           setUser(parsedUser);
           setToken(storedToken);
           setIsAuth(true);
