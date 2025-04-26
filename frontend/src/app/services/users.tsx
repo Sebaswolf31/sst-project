@@ -29,6 +29,28 @@ export const getUsersSuperAdmin = async (token: string, companyId: string) => {
     }
   }
 };
+export const getUsersById = async (token: string, userId: string) => {
+  try {
+    const response = await axiosApiBack.get(`/users/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("Respuesta de la API Users ID:", response.data);
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error("Error desde el backend:", error.response.data);
+      throw new Error(error.response.data.message || "Error desconocido");
+    } else if (axios.isAxiosError(error) && error.request) {
+      console.error("No hubo respuesta del servidor:", error.request);
+      throw new Error("No hubo respuesta del servidor");
+    } else {
+      console.error("Error inesperado:", (error as Error).message);
+      throw new Error((error as Error).message || "Error desconocido");
+    }
+  }
+};
 export const updateUser = async (
   userId: string,
   data: Partial<IUser>,
