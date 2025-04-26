@@ -2,6 +2,7 @@
 import React from "react";
 import RegisterUser from "./registerUser";
 import Accordion from "@/app/components/accordion";
+import GetUsersByCompany from "./getUsers";
 
 const Users = () => {
   return (
@@ -14,6 +15,9 @@ const Users = () => {
       </div>
       <Accordion title="Registro de usuarios por empresa contratante">
         <RegisterUser />
+      </Accordion>
+      <Accordion title="Usuarios por empresa contratante">
+        <GetUsersByCompany />
       </Accordion>
     </div>
   );

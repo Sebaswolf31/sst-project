@@ -1,11 +1,17 @@
+export enum UserRole {
+  RolSuperAdmin = "superadmin",
+  RolAdministrador = "admin",
+  RolOperario = "operator",
+}
 export interface IUser {
+  id?: string;
   name: string;
-  identification: string;
+  identification?: string;
   email: string;
-  password: string;
-  confirmPassword: string;
+  password?: string;
+  confirmPassword?: string;
   phone: string;
-  role: string;
+  role?: UserRole | "";
   companyId: string;
 }
 

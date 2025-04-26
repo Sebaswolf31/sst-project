@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import Button from "@/app/components/botton";
 import * as Yup from "yup";
-import { IUser } from "@/app/interface";
+import { IUser, UserRole } from "@/app/interface";
 import { registerService } from "@/app/services/auth";
 import { Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
@@ -38,6 +38,12 @@ const validationSchema = Yup.object().shape({
   role: Yup.string().required("El rol es obligatorio"),
   companyId: Yup.string().required("El Id de la empresa es requerido"),
 });
+const roleOptions = [
+  { value: "", label: "Seleccione un rol" },
+  { value: UserRole.RolSuperAdmin, label: "Administrador Superior" },
+  { value: UserRole.RolAdministrador, label: "Administrador" },
+  { value: UserRole.RolOperario, label: "Operador" },
+];
 const RegisterUser = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -200,11 +206,17 @@ const RegisterUser = () => {
 
               <div>
                 <Field
+                  as="select"
                   name="role"
-                  type="text"
-                  placeholder="Rol"
                   className="w-full p-3 text-gray-800 rounded-lg shadow-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-greenP"
-                />
+                >
+                  <option value="Seleccione un rol"></option>
+                  {roleOptions.map(({ value, label }) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </Field>
                 <ErrorMessage
                   name="role"
                   component="div"
