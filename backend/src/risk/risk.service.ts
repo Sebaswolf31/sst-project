@@ -1,26 +1,41 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Risk } from './entities/risk.entity';
 import { CreateRiskDto } from './dto/create-risk.dto';
 import { UpdateRiskDto } from './dto/update-risk.dto';
-
+ 
 @Injectable()
 export class RiskService {
-  create(createRiskDto: CreateRiskDto) {
-    return 'This action adds a new risk';
+  constructor(@InjectRepository(Risk) private repo: Repository<Risk>) {}
+
+  async create(dto: CreateRiskDto, companyId: string, createdById: string) {
+    const e = this.repo.create({
+      ...dto,
+      companyId,
+      createdById,
+    });
+    return this.repo.save(e);
   }
 
-  findAll() {
-    return `This action returns all risk`;
+  async findAll(companyId: string) {
+    return this.repo.find({ where: { companyId } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} risk`;
+  async findOne(id: string, companyId: string) {
+    const e = await this.repo.findOne({ where: { id, companyId } });
+    if (!e) throw new NotFoundException();
+    return e;
   }
 
-  update(id: number, updateRiskDto: UpdateRiskDto) {
-    return `This action updates a #${id} risk`;
+  async update(id: string, companyId: string, dto: UpdateRiskDto) {
+    const e = await this.findOne(id, companyId);
+    Object.assign(e, dto);
+    return this.repo.save(e);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} risk`;
+  async remove(id: string, companyId: string) {
+    const e = await this.findOne(id, companyId);
+    await this.repo.remove(e);
   }
 }

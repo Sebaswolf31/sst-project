@@ -7,7 +7,7 @@ import { Company } from './entities/company.entity';
 import { UsersModule } from '../users/users.module';
 import { Risk } from 'src/risk/entities/risk.entity';
 import { Inspection } from 'src/inspection/entities/inspection.entity';
-import { Document } from 'src/document/entities/document.entity';
+
 
 @Module({
   imports: [
@@ -15,7 +15,6 @@ import { Document } from 'src/document/entities/document.entity';
     forwardRef(() => UsersModule), // Necesario para relaciones
     Risk,
     Inspection,
-    Document,
   ],
   controllers: [CompanyController],
   providers: [CompanyService],
