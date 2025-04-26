@@ -12,7 +12,7 @@ export interface IUser {
   confirmPassword?: string;
   phone: string;
   role?: UserRole | "";
-  companyId: string;
+  companyId?: string | "";
 }
 
 export interface IUserLogin {

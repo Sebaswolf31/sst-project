@@ -35,7 +35,7 @@ const GetUsersById = () => {
 
       setSearchedUser(respuesta);
       console.log(respuesta, "respuesta back getuserbyid");
-      toast.success("Usuarios encontrados");
+      toast.success("Colaborador encontrado");
       setUserId("");
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -78,7 +78,7 @@ const GetUsersById = () => {
 
       setEditingId(null);
       setEditedUser(null);
-      toast.success("Usuario actualizado");
+      toast.success("Colaborador actualizado");
     } catch (err) {
       console.error("Error en updateUser:", err);
       setError("Error al actualizar el usuario");
@@ -88,7 +88,7 @@ const GetUsersById = () => {
   return (
     <div className="max-w-4xl p-6 mx-auto text-foreground">
       <h2 className="mb-8 text-2xl font-semibold text-center text-gray-800">
-        Usuarios Registrados
+        Colaborador Registrado
       </h2>
 
       <div className="flex items-center gap-2 mb-6">
@@ -222,7 +222,7 @@ const GetUsersById = () => {
             )}
           </div>
         ) : (
-          <p>No se encontraron usuarios con este ID.</p>
+          <p>No se encontraron colaboradores con este ID.</p>
         )}
       </div>
     </div>

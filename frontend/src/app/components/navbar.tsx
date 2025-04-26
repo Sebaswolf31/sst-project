@@ -77,10 +77,10 @@ const Navbar = () => {
                   Inicio
                 </Link>
                 <Link
-                  href={routes.home}
+                  href={routes.userAdmin}
                   className="transition hover:text-verde"
                 >
-                  isAdmin 1
+                  Usuarios
                 </Link>
                 <Link href={routes.home}>isAdmin 2</Link>
 
