@@ -1,4 +1,7 @@
+"use client";
 import React from "react";
+import CreateCompany from "./createCompany";
+import Accordion from "@/app/components/accordion";
 import GetCompany from "./getCompany";
 
 const Companies = () => {
@@ -10,7 +13,12 @@ const Companies = () => {
         </h1>
         <hr className="w-full my-2 border-t-2 border-greenP" />
       </div>
-      <GetCompany />
+      <Accordion title="Registro de empresa">
+        <CreateCompany />
+      </Accordion>
+      <Accordion title="Busqueda de empresa por ID">
+        <GetCompany />
+      </Accordion>
     </div>
   );
 };
