@@ -10,7 +10,6 @@ import { AuthModule } from './auth/auth.module';
 import { CompanyModule } from './company/company.module';
 import { RiskModule } from './risk/risk.module';
 import { InspectionModule } from './inspection/inspection.module';
-import { DocumentModule } from './document/document.module';
 
 
 @Module({
@@ -20,7 +19,6 @@ import { DocumentModule } from './document/document.module';
     CompanyModule,
     RiskModule,
     InspectionModule,
-    DocumentModule,
 
     ConfigModule.forRoot({
       isGlobal: true,
