@@ -19,6 +19,9 @@ const Users = () => {
       <Accordion title="Usuarios por empresa contratante">
         <GetUsersByCompany />
       </Accordion>
+      <Accordion title="Usuarios por empresa contratante">
+        <GetUsersByCompany />
+      </Accordion>
     </div>
   );
 };
