@@ -51,7 +51,7 @@ const Navbar = () => {
                 >
                   Usuarios
                 </Link>
-                <Link href={routes.home}>superAdmin 2</Link>
+                <Link href={routes.companies}>Empresas</Link>
 
                 <Link href={routes.home}>superAdmin 3</Link>
                 <Link href={routes.home}>superAdmin 4</Link>
@@ -77,10 +77,10 @@ const Navbar = () => {
                   Inicio
                 </Link>
                 <Link
-                  href={routes.home}
+                  href={routes.userAdmin}
                   className="transition hover:text-verde"
                 >
-                  isAdmin 1
+                  Usuarios
                 </Link>
                 <Link href={routes.home}>isAdmin 2</Link>
 
