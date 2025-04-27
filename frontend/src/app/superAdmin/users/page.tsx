@@ -6,7 +6,7 @@ import GetUsersByCompany from "./getUsers";
 import GetUsersById from "./getUsersById";
 import { useAuth } from "@/app/contexts/authContext";
 import { useRouter } from "next/navigation";
-import { isAdmin } from "@/app/helpers/authhelpers";
+import { isSuperAdmin } from "@/app/helpers/authhelpers";
 import { routes } from "@/app/routes/routes";
 
 const Users = () => {
@@ -14,12 +14,12 @@ const Users = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAdmin(user)) {
+    if (!isSuperAdmin(user)) {
       router.push(routes.home);
     }
   }, [user]);
 
-  if (!isAdmin(user)) {
+  if (!isSuperAdmin(user)) {
     return null;
   }
   return (
