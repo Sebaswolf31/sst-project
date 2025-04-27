@@ -29,6 +29,8 @@ export class AuthService {
       throw new ConflictException(`El email ${email} ya está en uso`);
     }
 
+    // aca validamos la identificacion del usuario
+
     const hashPassword = await bcrypt.hash(password, 10);
     const userEntity = this.usersRepository.create({
       ...rest,
