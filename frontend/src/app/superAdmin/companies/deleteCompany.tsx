@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { deleteUserService } from "@/app/services/users";
+import { deleteCompanyService } from "@/app/services/companies";
 
 interface DeleteUsersProps {
   id: string;
@@ -22,7 +22,7 @@ const DeleteCompany: React.FC<DeleteUsersProps> = ({ id }) => {
         return;
       }
 
-      const success = await deleteUserService(id, token);
+      const success = await deleteCompanyService(id, token);
       if (!success) {
         throw new Error("No se pudo eliminar a la Empresa.");
       }
@@ -33,7 +33,7 @@ const DeleteCompany: React.FC<DeleteUsersProps> = ({ id }) => {
       }, 2000);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.error("Error al desactivar usuario:", error);
+      console.error("Error al desactivar empresa:", error);
       toast.error(error.message);
     } finally {
       setLoading(false);

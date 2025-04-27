@@ -20,7 +20,7 @@ const Users = () => {
       <Accordion title="Usuarios por empresa contratante">
         <GetUsersByCompany />
       </Accordion>
-      <Accordion title="Usuarios por ID del usuario">
+      <Accordion title="Busqueda de usuarios por ID">
         <GetUsersById />
       </Accordion>
     </div>

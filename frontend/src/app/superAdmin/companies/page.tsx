@@ -3,6 +3,7 @@ import React from "react";
 import CreateCompany from "./createCompany";
 import Accordion from "@/app/components/accordion";
 import GetCompany from "./getCompany";
+import GetCompanies from "./getCompanies";
 
 const Companies = () => {
   return (
@@ -15,6 +16,9 @@ const Companies = () => {
       </div>
       <Accordion title="Registro de empresa">
         <CreateCompany />
+      </Accordion>
+      <Accordion title="Listado de empresas">
+        <GetCompanies />
       </Accordion>
       <Accordion title="Busqueda de empresa por ID">
         <GetCompany />
