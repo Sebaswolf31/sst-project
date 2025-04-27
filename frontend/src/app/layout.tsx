@@ -34,15 +34,32 @@ export default function RootLayout({
             toastOptions={{
               success: {
                 style: {
-                  background: "green",
+                  background: "#175699",
+                  color: "white",
+                  borderRadius: "8px",
+                  padding: "16px",
+                  boxShadow: "0 4px 14px rgba(0, 0, 0, 0.25)",
+                },
+                iconTheme: {
+                  primary: "white",
+                  secondary: "#16a34a",
                 },
               },
               error: {
                 style: {
-                  background: "red",
+                  background: "#ef4444",
+                  color: "white",
+                  borderRadius: "8px",
+                  padding: "16px",
+                  boxShadow: "0 4px 14px rgba(0, 0, 0, 0.25)",
+                },
+                iconTheme: {
+                  primary: "white",
+                  secondary: "#dc2626",
                 },
               },
               position: "top-center",
+              duration: 2000,
             }}
           />
 

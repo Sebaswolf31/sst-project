@@ -93,7 +93,7 @@ const GetCompany = () => {
               setSearchedCompany(null);
               setCompanyId("");
             }}
-            className="px-2 text-sm text-white bg-red-600 rounded"
+            className="px-2 text-sm text-white bg-red-500 rounded"
           >
             Limpiar Filtro
           </button>
