@@ -10,6 +10,7 @@ import {
 import { Company } from '../../company/entities/company.entity';
 import { Risk } from '../../risk/entities/risk.entity';
 import { Inspection } from '../../inspection/entities/inspection.entity';
+import { Document } from '../../document/entities/document.entity';
 
 export enum UserRole {
   SUPERADMIN = 'superadmin',
@@ -63,4 +64,7 @@ export class User {
 
   @OneToMany(() => Inspection, (inspection) => inspection.createdBy)
   inspections: Inspection[];
+
+  @OneToMany(() => Document, (document) => document.uploadedBy)
+  documents: Document[];
 }
