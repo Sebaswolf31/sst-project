@@ -1,9 +1,11 @@
 "use client";
 import React from "react";
-import RegisterUser from "./registerUser";
+import RegisterUser from "./registerUsers";
 import Accordion from "@/app/components/accordion";
-import GetUsersByCompany from "./getUsers";
 import GetUsersById from "./getUsersById";
+import GetUsers from "./getUsers";
+//import GetUsersByCompany from "./getUsers";
+//import GetUsersById from "./getUsersById";
 
 const Users = () => {
   return (
@@ -14,13 +16,13 @@ const Users = () => {
         </h1>
         <hr className="w-full my-2 border-t-2 border-greenP" />
       </div>
-      <Accordion title="Registro de usuarios por empresa contratante">
+      <Accordion title="Registro de colaboradores">
         <RegisterUser />
       </Accordion>
-      <Accordion title="Usuarios por empresa contratante">
-        <GetUsersByCompany />
+      <Accordion title="Listado de colaboradores">
+        <GetUsers />
       </Accordion>
-      <Accordion title="Busqueda de usuarios por ID">
+      <Accordion title="Buscar colaboradores por ID">
         <GetUsersById />
       </Accordion>
     </div>

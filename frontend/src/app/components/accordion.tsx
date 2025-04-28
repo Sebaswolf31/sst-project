@@ -13,7 +13,7 @@ const Accordion: React.FC<AccordionProps> = ({ title, children }) => {
   };
 
   return (
-    <div className="mb-4 border border-gray-300 rounded-lg shadow-md">
+    <div className="border border-gray-300 rounded-lg shadow-md mb-7">
       <button
         onClick={toggleAccordion}
         className="flex items-center justify-between w-full px-4 py-2 rounded-lg text-foreground bg-azul focus:outline-none"

@@ -19,7 +19,14 @@ export class AuthService {
   ) {}
 
   async createUser(user: CreateUserDto) {
-    const { email, password, confirmPassword, companyId, ...rest } = user;
+    const {
+      email,
+      password,
+      confirmPassword,
+      companyId,
+      identification,
+      ...rest
+    } = user;
 
     const existingUser = await this.usersRepository.findOne({
       where: { email },
@@ -29,12 +36,24 @@ export class AuthService {
       throw new ConflictException(`El email ${email} ya está en uso`);
     }
 
+    // aca validamos la identificacion del usuario
+    const existingUserI = await this.usersRepository.findOne({
+      where: { identification },
+    });
+
+    if (existingUserI) {
+      throw new ConflictException(
+        `La identificacion ${identification} ya está en uso`,
+      );
+    }
+
     const hashPassword = await bcrypt.hash(password, 10);
     const userEntity = this.usersRepository.create({
       ...rest,
       email,
       password: hashPassword,
       companyId,
+      identification,
     });
 
     const saved = await this.usersRepository.save(userEntity);
