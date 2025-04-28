@@ -10,6 +10,8 @@ import { AuthModule } from './auth/auth.module';
 import { CompanyModule } from './company/company.module';
 import { RiskModule } from './risk/risk.module';
 import { InspectionModule } from './inspection/inspection.module';
+import { DocumentModule } from './document/document.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 
 @Module({
@@ -19,6 +21,7 @@ import { InspectionModule } from './inspection/inspection.module';
     CompanyModule,
     RiskModule,
     InspectionModule,
+    DocumentModule,
 
     ConfigModule.forRoot({
       isGlobal: true,
@@ -39,6 +42,8 @@ import { InspectionModule } from './inspection/inspection.module';
         return dbConfig;
       },
     }),
+
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

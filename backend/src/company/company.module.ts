@@ -8,13 +8,10 @@ import { UsersModule } from '../users/users.module';
 import { Risk } from 'src/risk/entities/risk.entity';
 import { Inspection } from 'src/inspection/entities/inspection.entity';
 
-
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Company]),
+    TypeOrmModule.forFeature([Company, Risk, Inspection]),
     forwardRef(() => UsersModule), // Necesario para relaciones
-    Risk,
-    Inspection,
   ],
   controllers: [CompanyController],
   providers: [CompanyService],

@@ -8,6 +8,8 @@ import {
   Body,
   UseGuards,
   BadRequestException,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -18,6 +20,7 @@ import { CreateInspectionDto } from './dto/create-inspection.dto';
 import { UpdateInspectionDto } from './dto/update-inspection.dto';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { User } from '../users/entities/user.entity';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @Controller('inspections')
 @UseGuards(AuthGuard, RolesGuard)
@@ -25,20 +28,40 @@ export class InspectionController {
   constructor(private readonly inspectionService: InspectionService) {}
 
   @Post()
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'signature', maxCount: 1 },
+      { name: 'attachments', maxCount: 5 },
+    ]),
+  )
   @Roles(UserRole.ADMIN, UserRole.OPERATOR)
-  create(@GetUser() user: User, @Body() dto: CreateInspectionDto) {
+  async create(
+    @GetUser() user: User,
+    @Body() dto: CreateInspectionDto,
+    @UploadedFiles()
+    files: {
+      signature?: Express.Multer.File[];
+      attachments?: Express.Multer.File[];
+    },
+  ) {
     if (!user.companyId) {
       throw new BadRequestException('Tu usuario no tiene companyId');
     }
-    return this.inspectionService.create(dto, user.companyId, user.id);
+    return this.inspectionService.create(
+      dto,
+      user.companyId,
+      user.id,
+      files?.signature?.[0],
+      files?.attachments,
+    );
   }
 
   @Get()
   @Roles(UserRole.ADMIN, UserRole.SUPERADMIN)
   findAll(@GetUser() user: User) {
-     if (!user.companyId) {
-       throw new BadRequestException('Tu usuario no tiene companyId');
-     }
+    if (!user.companyId) {
+      throw new BadRequestException('Tu usuario no tiene companyId');
+    }
     return this.inspectionService.findAll(user.companyId);
   }
 
