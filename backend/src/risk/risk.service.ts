@@ -4,18 +4,38 @@ import { Repository } from 'typeorm';
 import { Risk } from './entities/risk.entity';
 import { CreateRiskDto } from './dto/create-risk.dto';
 import { UpdateRiskDto } from './dto/update-risk.dto';
- 
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
+
 @Injectable()
 export class RiskService {
-  constructor(@InjectRepository(Risk) private repo: Repository<Risk>) {}
+  constructor(
+    @InjectRepository(Risk) private repo: Repository<Risk>,
+    private cloudinaryService: CloudinaryService,
+  ) {}
 
-  async create(dto: CreateRiskDto, companyId: string, createdById: string) {
-    const e = this.repo.create({
+  async create(
+    dto: CreateRiskDto,
+    companyId: string,
+    createdById: string,
+    files?: Express.Multer.File[],
+  ) {
+    const attachments = files
+      ? await Promise.all(
+          files.map((file) =>
+            this.cloudinaryService.uploadFile(
+              file,
+              `companies/${companyId}/risks`,
+            ),
+          ),
+        )
+      : [];
+
+    return this.repo.save({
       ...dto,
       companyId,
       createdById,
+      attachments,
     });
-    return this.repo.save(e);
   }
 
   async findAll(companyId: string) {

@@ -6,9 +6,13 @@ import { Risk } from 'src/risk/entities/risk.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Company } from 'src/company/entities/company.entity';
 import { Inspection } from './entities/inspection.entity';
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Inspection, Risk, Company, User])],
+  imports: [
+    TypeOrmModule.forFeature([Inspection, Risk, Company, User]),
+    CloudinaryModule,
+  ],
   controllers: [InspectionController],
   providers: [InspectionService],
   exports: [InspectionService],
