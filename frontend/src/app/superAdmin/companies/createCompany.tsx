@@ -76,7 +76,7 @@ const CreateCompany = () => {
                 disabled={isSubmitting}
                 className="w-full py-3 text-white rounded-lg bg-greenP hover:bg-green-600 focus:outline-none"
               >
-                {isSubmitting ? "Registrando..." : "Registrar Usuario"}
+                {isSubmitting ? "Registrando..." : "Registrar Empresa"}
               </Button>
             </Form>
           )}
