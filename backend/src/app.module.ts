@@ -8,10 +8,8 @@ import { JwtModule } from '@nestjs/jwt/dist/jwt.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { CompanyModule } from './company/company.module';
-import { RiskModule } from './risk/risk.module';
-import { InspectionModule } from './inspection/inspection.module';
-import { DocumentModule } from './document/document.module';
-import { CloudinaryModule } from './cloudinary/cloudinary.module';
+
+
 
 
 @Module({
@@ -19,9 +17,6 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     UsersModule,
     AuthModule,
     CompanyModule,
-    RiskModule,
-    InspectionModule,
-    DocumentModule,
 
     ConfigModule.forRoot({
       isGlobal: true,
@@ -43,7 +38,6 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
       },
     }),
 
-    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
