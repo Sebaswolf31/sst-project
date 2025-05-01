@@ -9,11 +9,11 @@ import {
 } from 'typeorm';
 import { Company } from '../../company/entities/company.entity';
 
-
 export enum UserRole {
   SUPERADMIN = 'superadmin',
   ADMIN = 'admin',
   OPERATOR = 'operator',
+  CONSULTOR = 'consultor',
 }
 
 @Entity()
@@ -55,5 +55,4 @@ export class User {
   })
   @JoinColumn({ name: 'companyId' }) // ← declara la columna FK
   company: Company;
-
 }
