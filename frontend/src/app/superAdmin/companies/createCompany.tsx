@@ -27,6 +27,7 @@ const CreateCompany = () => {
       }
       console.log(values.name, "Que se envia añl back ");
       const companyName = String(values.name).trim();
+
       if (!companyName) {
         toast.error("El nombre de la empresa no puede estar vacío");
         return;
