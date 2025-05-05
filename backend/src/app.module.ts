@@ -8,8 +8,8 @@ import { JwtModule } from '@nestjs/jwt/dist/jwt.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { CompanyModule } from './company/company.module';
-import { RiskModule } from './risk/risk.module';
-import { InspectionModule } from './inspection/inspection.module';
+
+
 
 
 @Module({
@@ -17,8 +17,6 @@ import { InspectionModule } from './inspection/inspection.module';
     UsersModule,
     AuthModule,
     CompanyModule,
-    RiskModule,
-    InspectionModule,
 
     ConfigModule.forRoot({
       isGlobal: true,
@@ -39,6 +37,7 @@ import { InspectionModule } from './inspection/inspection.module';
         return dbConfig;
       },
     }),
+
   ],
   controllers: [AppController],
   providers: [AppService],
