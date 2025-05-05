@@ -25,14 +25,17 @@ const CreateCompany = () => {
         toast.error("No hay token disponible");
         return;
       }
-      console.log(values.name, "Que se envia añl back ");
-      const companyName = String(values.name).trim();
+      const companyName =
+        values.name.charAt(0).toUpperCase() +
+        values.name.slice(1).toLowerCase();
+      console.log(values.name, "Que se envia al back ");
+      const companyNameCap = String(companyName).trim();
 
       if (!companyName) {
         toast.error("El nombre de la empresa no puede estar vacío");
         return;
       }
-      const companyData = { name: companyName };
+      const companyData = { name: companyNameCap };
       console.log(companyName, "Que se envia al back");
       await createCompanyService(companyData, token);
       toast.success("Empresa registrada correctamente!");
