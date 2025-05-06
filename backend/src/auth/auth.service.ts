@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt/dist';
 import { User } from '../users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { UserRole } from '../users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +24,8 @@ export class AuthService {
       email,
       password,
       confirmPassword,
-      companyId,
+      companyIds,
+      //companyId,
       identification,
       ...rest
     } = user;
@@ -52,7 +54,7 @@ export class AuthService {
       ...rest,
       email,
       password: hashPassword,
-      companyId,
+      companies: companyIds ? companyIds.map((id) => ({ id })) : [], // Relación Many-to-Many
       identification,
     });
 
@@ -64,7 +66,7 @@ export class AuthService {
   async singin(credentials: LoginUserDto) {
     const user = await this.usersRepository.findOne({
       where: { email: credentials.email },
-      relations: ['company'], // Asegurar carga de relación cuando exista
+      relations: ['companies'], // Asegurar carga de relación cuando exista
     });
 
     if (!user || !(await bcrypt.compare(credentials.password, user.password))) {
@@ -76,7 +78,12 @@ export class AuthService {
       sub: user.id,
       email: user.email,
       role: user.role,
-      companyId: user.company?.id || null, // Asegurar companyId
+      //companyId: user.company?.id || null, // Asegurar companyId
+      companyIds:
+        user.role === UserRole.CONSULTOR
+          ? user.companies.map((c) => c.id)
+          : undefined,
+      companyId: user.role !== UserRole.CONSULTOR && user.companies?.[0]?.id,
     };
 
     return {
@@ -85,7 +92,12 @@ export class AuthService {
         id: user.id,
         name: user.name,
         role: user.role,
-        companyId: user.company?.id,
+        //companyId: user.company?.id,
+        companyIds:
+          user.role === UserRole.CONSULTOR
+            ? user.companies.map((c) => c.id)
+            : undefined,
+        companyId: user.role !== UserRole.CONSULTOR && user.companies?.[0]?.id,
       },
     };
   }

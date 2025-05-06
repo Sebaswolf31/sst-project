@@ -7,6 +7,8 @@ import {
   Matches,
   MaxLength,
   Validate,
+  IsArray,
+  ValidateIf,
 } from 'class-validator';
 import { UserRole } from '../entities/user.entity';
 import { MatchPassword } from '../../helpers/matchPassword';
@@ -46,8 +48,14 @@ export class CreateUserDto {
   @IsEnum(UserRole)
   role: UserRole;
 
-  @IsNotEmpty()
-  companyId: string; // ID de la empresa asignada
+  @IsArray()
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
+  @ValidateIf((dto) => dto.role === UserRole.CONSULTOR)
+  companyIds?: string[]; // Solo requerido para CONSULTOR
+
+  // @IsNotEmpty()
+  // companyId: string; // ID de la empresa asignada
 }
 
 export class LoginUserDto {

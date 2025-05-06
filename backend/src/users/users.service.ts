@@ -17,10 +17,12 @@ export class UsersService {
   ) {}
 
   async findAll(companyId?: string): Promise<User[]> {
-    const query = this.usersRepository.createQueryBuilder('user');
+    const query = this.usersRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.companies', 'company');
 
     if (companyId) {
-      query.where('user.companyId = :companyId', { companyId });
+      query.where('company.id = :companyId', { companyId });
     }
 
     return query.getMany();
@@ -29,7 +31,7 @@ export class UsersService {
   async findOne(id: string): Promise<User> {
     const user = await this.usersRepository.findOne({
       where: { id },
-      relations: ['company'],
+      relations: ['companies'],
     });
 
     if (!user) {
@@ -50,7 +52,7 @@ export class UsersService {
     if (currentUser?.role === UserRole.ADMIN) {
       if (
         updateUserDto.companyId &&
-        updateUserDto.companyId !== user.companyId
+        updateUserDto.companyId !== user.companies[0]?.id
       ) {
         throw new ForbiddenException(
           'No puedes cambiar la empresa del usuario',
@@ -63,13 +65,29 @@ export class UsersService {
     return this.usersRepository.save({ ...user, ...updateUserDto });
   }
 
+  // async remove(id: string, currentUser?: User): Promise<void> {
+  //   const user = await this.findOne(id);
+
+  //   // Verificar permisos (si se pasa currentUser)
+  //   if (
+  //     currentUser?.role === UserRole.ADMIN &&
+  //     user.companyId !== currentUser.companyId
+  //   ) {
+  //     throw new ForbiddenException(
+  //       'No puedes eliminar usuarios de otra empresa',
+  //     );
+  //   }
+
+  //   await this.usersRepository.remove(user);
+  // }
+
   async remove(id: string, currentUser?: User): Promise<void> {
     const user = await this.findOne(id);
 
     // Verificar permisos (si se pasa currentUser)
     if (
       currentUser?.role === UserRole.ADMIN &&
-      user.companyId !== currentUser.companyId
+      user.companies[0]?.id !== currentUser.companies[0]?.id
     ) {
       throw new ForbiddenException(
         'No puedes eliminar usuarios de otra empresa',
@@ -83,7 +101,8 @@ export class UsersService {
   async findByEmail(email: string): Promise<User | undefined> {
     const user = await this.usersRepository.findOne({
       where: { email },
-      select: ['id', 'email', 'password', 'role', 'company'],
+      relations: ['companies'],
+      select: ['id', 'email', 'password', 'role'],
     });
     return user ?? undefined;
   }
