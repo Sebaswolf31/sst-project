@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  ManyToMany,
+} from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 
 
@@ -10,7 +16,9 @@ export class Company {
   @Column({ unique: true })
   name: string;
 
-  @OneToMany(() => User, (user) => user.company)
+  @ManyToMany(() => User, (user) => user.companies)
   users: User[];
 
+  // @OneToMany(() => User, (user) => user.company)
+  // users: User[];
 }

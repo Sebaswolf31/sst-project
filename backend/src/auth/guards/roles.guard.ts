@@ -34,9 +34,32 @@ export class RolesGuard implements CanActivate {
     // Verificar si el rol del usuario está permitido
     const hasRole = requiredRoles.some((role) => user.role === role);
 
-    // ADMIN y OPERATOR deben pertenecer a una empresa
-    if (!hasRole || (user.role !== UserRole.SUPERADMIN && !user.companyId)) {
+    //     // ADMIN y OPERATOR deben pertenecer a una empresa
+    //     if (!hasRole || (user.role !== UserRole.SUPERADMIN && !user.companyId)) {
+    //       throw new UnauthorizedException('No tienes permisos para esta acción');
+    //     }
+
+    //     return true;
+    //   }
+    // }
+
+    if (!hasRole) {
       throw new UnauthorizedException('No tienes permisos para esta acción');
+    }
+
+    // Validación de empresa según rol
+    if (user.role !== UserRole.SUPERADMIN) {
+      if (user.role === UserRole.CONSULTOR) {
+        if (!user.companyIds?.length) {
+          throw new UnauthorizedException(
+            'Consultor debe pertenecer a al menos una empresa',
+          );
+        }
+      } else if (!user.companyId) {
+        throw new UnauthorizedException(
+          'Usuario debe pertenecer a una empresa',
+        );
+      }
     }
 
     return true;

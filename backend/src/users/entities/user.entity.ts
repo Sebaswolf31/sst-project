@@ -6,14 +6,16 @@ import {
   OneToMany,
   Unique,
   JoinColumn,
+  ManyToMany,
+  JoinTable
 } from 'typeorm';
 import { Company } from '../../company/entities/company.entity';
-
 
 export enum UserRole {
   SUPERADMIN = 'superadmin',
   ADMIN = 'admin',
   OPERATOR = 'operator',
+  CONSULTOR = 'consultor',
 }
 
 @Entity()
@@ -45,15 +47,18 @@ export class User {
   })
   role: UserRole;
 
-  @Column({ type: 'uuid', nullable: true }) // ← expone companyId
-  companyId?: string;
+  @ManyToMany(() => Company, (company) => company.users)
+  @JoinTable()
+  companies: Company[]; // Cambiar a array de Companies
 
-  // Relación con Company
-  @ManyToOne(() => Company, (company) => company.users, {
-    nullable: true, // Permite companyId = NULL
-    onDelete: 'CASCADE', // Si se elimina la empresa, se eliminan sus usuarios
-  })
-  @JoinColumn({ name: 'companyId' }) // ← declara la columna FK
-  company: Company;
+  // @Column({ type: 'uuid', nullable: true }) // ← expone companyId
+  // companyId?: string;
 
+  // // Relación con Company
+  // @ManyToOne(() => Company, (company) => company.users, {
+  //   nullable: true, // Permite companyId = NULL
+  //   onDelete: 'CASCADE', // Si se elimina la empresa, se eliminan sus usuarios
+  // })
+  // @JoinColumn({ name: 'companyId' }) // ← declara la columna FK
+  // company: Company;
 }
