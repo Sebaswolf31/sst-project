@@ -24,7 +24,6 @@ const GetCompanies = () => {
 
       const respuesta = await getCompanies(token);
       setSearchedCompany(respuesta);
-      toast.success("Empresas encontradas");
       setCompanyId("");
     } catch (error: unknown) {
       if (error instanceof Error) {

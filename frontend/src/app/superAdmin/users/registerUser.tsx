@@ -7,6 +7,7 @@ import { IUser, UserRole } from "@/app/interface";
 import { registerService } from "@/app/services/auth";
 import { Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
+import SelectCompany from "./selectCompany";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string()
@@ -224,19 +225,7 @@ const RegisterUser = () => {
                 />
               </div>
 
-              <div>
-                <Field
-                  name="companyId"
-                  type="text"
-                  placeholder="Id Empresa"
-                  className="w-full p-3 text-gray-800 rounded-lg shadow-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-greenP"
-                />
-                <ErrorMessage
-                  name="companyId"
-                  component="div"
-                  className="mt-2 text-sm text-red-500"
-                />
-              </div>
+              <SelectCompany />
 
               <Button
                 type="submit"
