@@ -9,6 +9,9 @@ import {
   Body,
   Req,
   ForbiddenException,
+  Post,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../auth/guards/auth.guard';
@@ -16,6 +19,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AddCompanyDto } from './dto/add-company.dto';
 
 @Controller('users')
 @UseGuards(AuthGuard, RolesGuard)
@@ -70,10 +74,6 @@ export class UsersController {
 
     // Si es ADMIN, verificar que el usuario objetivo sea de su empresa
     if (currentUser.role === UserRole.ADMIN) {
-      // if (targetUser.companyId !== currentUser.companyId) {
-      //   throw new ForbiddenException('No puedes modificar usuarios de otra empresa');
-      // }
-
       const targetCompanyId = targetUser.companies[0]?.id;
       const currentCompanyId = currentUser.companies[0]?.id;
 
@@ -86,7 +86,6 @@ export class UsersController {
 
     return this.usersService.update(id, updateUserDto, currentUser);
   }
-
   @Delete(':id')
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN)
   async remove(@Param('id') id: string, @Req() req) {
@@ -111,4 +110,23 @@ export class UsersController {
 
     return this.usersService.remove(id, currentUser);
   }
+
+  @Post(':id/companies')
+  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN)
+  @UsePipes(new ValidationPipe())
+  async addCompany(
+    @Param('id') userId: string,
+    @Body() addCompanyDto: AddCompanyDto,
+    @Req() req,
+  ) {
+    return this.usersService.addCompanyToConsultor(
+      userId,
+      addCompanyDto.companyId,
+      req.user,
+    );
+  }
 }
+
+
+
+

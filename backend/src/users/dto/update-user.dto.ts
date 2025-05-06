@@ -8,6 +8,7 @@ import {
   MaxLength,
   Validate,
   IsOptional,
+  IsArray,
 } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 import { UserRole } from '../entities/user.entity';
@@ -56,7 +57,8 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsEnum(UserRole)
   role: UserRole;
 
+  @IsArray()
+  @IsString({ each: true })
   @IsOptional()
-  @IsNotEmpty()
-  companyId?: string; // ID de la empresa asignada
+  companyIds?: string[]; // ID de la empresa asignada
 }
