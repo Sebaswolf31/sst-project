@@ -53,7 +53,7 @@ const Navbar = () => {
                 </Link>
                 <Link href={routes.companies}>Empresas</Link>
 
-                <Link href={routes.home}>superAdmin 3</Link>
+                <Link href={routes.home}>Hacer</Link>
                 <Link href={routes.home}>superAdmin 4</Link>
 
                 <Link href={routes.home}>superAdmin 5</Link>
