@@ -57,7 +57,7 @@ const Navbar = () => {
 
               <Link href={routes.home}>Verificar</Link>
 
-              <Link href={routes.home} className="transition hover:text-verde">
+              <Link href={routes.act} className="transition hover:text-verde">
                 Actuar
               </Link>
             </div>
@@ -73,16 +73,12 @@ const Navbar = () => {
               >
                 Usuarios
               </Link>
-              <Link href={routes.home}>isAdmin 2</Link>
+              <Link href={routes.home}>Planear</Link>
 
-              <Link href={routes.home}>isAdmin 3</Link>
-              <Link href={routes.home}>isAdmin 4</Link>
+              <Link href={routes.home}>Hacer</Link>
+              <Link href={routes.home}>Verificar</Link>
 
-              <Link href={routes.home}>isAdmin 5</Link>
-
-              <Link href={routes.home} className="transition hover:text-verde">
-                isAdmin 6
-              </Link>
+              <Link href={routes.act}>Actuar</Link>
             </div>
           )}
           {isOperator(user) && (
@@ -100,7 +96,7 @@ const Navbar = () => {
 
               <Link href={routes.home}>isOperator 5</Link>
 
-              <Link href={routes.home} className="transition hover:text-verde">
+              <Link href={routes.act} className="transition hover:text-verde">
                 isOperator 6
               </Link>
             </div>
