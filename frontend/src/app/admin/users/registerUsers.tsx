@@ -61,8 +61,10 @@ const RegisterUser = () => {
         toast.error("No se encontró la empresa del usuario actual");
         return;
       }
+      const upperName =
+        values.name.charAt(0).toUpperCase() + values.name.slice(1);
       const formattedUserData = {
-        name: values.name,
+        name: upperName,
         identification: values.identification,
         email: values.email,
         password: values.password,

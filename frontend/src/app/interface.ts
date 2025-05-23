@@ -24,3 +24,22 @@ export interface ICompany {
   name: string;
   id?: string;
 }
+export enum FieldType {
+  Texto = "text",
+  Numero = "number",
+  Checkbox = "checkbox",
+  Fecha = "date",
+  Opciones = "dropdown",
+}
+export interface IInspection {
+  id?: string;
+  fieldName: string;
+  displayName: string;
+  type: FieldType;
+  required: boolean;
+  options?: string[];
+}
+export interface CreateInspectionTemplateDto {
+  name: string;
+  fields: IInspection[];
+}

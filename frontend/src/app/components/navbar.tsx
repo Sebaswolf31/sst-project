@@ -7,7 +7,12 @@ import { FiMenu } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 import { useAuth } from "@/app/contexts/authContext";
 import { IoIosLogOut } from "react-icons/io";
-import { isAdmin, isOperator, isSuperAdmin } from "@/app/helpers/authhelpers";
+import {
+  isAdmin,
+  isOperator,
+  isSuperAdmin,
+  isInpector,
+} from "@/app/helpers/authhelpers";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -78,6 +83,25 @@ const Navbar = () => {
               <Link href={routes.home}>Planear</Link>
 
               <Link href={routes.home}>Hacer</Link>
+              <Link href={routes.home}>Verificar</Link>
+
+              <Link href={routes.act}>Actuar</Link>
+            </div>
+          )}
+          {isInpector(user) && (
+            <div className="flex flex-col items-center px-4 lg:flex-row lg:gap-8 lg:space-x-8">
+              <Link href={routes.home} className="transition hover:text-verde">
+                Inicio
+              </Link>
+              <Link
+                href={routes.userAdmin}
+                className="transition hover:text-verde"
+              >
+                Usuarios
+              </Link>
+              <Link href={routes.home}>Planear</Link>
+
+              <Link href={routes.act}>Hacer</Link>
               <Link href={routes.home}>Verificar</Link>
 
               <Link href={routes.act}>Actuar</Link>
