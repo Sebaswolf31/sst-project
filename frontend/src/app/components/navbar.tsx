@@ -21,7 +21,9 @@ const Navbar = () => {
           <img src="/logo.png" alt="logo" className="w-auto h-10" />
         </Link>
         {user ? (
-          <p className="text-center">¡Hola, {user?.name || "Usuario"}! 👋 </p>
+          <p className="text-center">
+            ¡Hola, {user?.name.split(" ")[0] || "Usuario"}! 👋{" "}
+          </p>
         ) : (
           <p className="text-center">
             ⛑ Tu seguridad es nuestra prioridad. Inicia sesión para continuar. ⛑

@@ -2,6 +2,7 @@ export enum UserRole {
   RolSuperAdmin = "superadmin",
   RolAdministrador = "admin",
   RolOperario = "operator",
+  RolInspector = "inspector",
 }
 export interface IUser {
   id?: string;
