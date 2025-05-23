@@ -15,13 +15,15 @@ const Navbar = () => {
   console.log(user, "userennavbar");
 
   return (
-    <div className="z-40 text-white top-4 bg-blueP">
-      <nav className="flex items-center justify-between p-4 mx-auto shadow-xl text-foreground ring-2 ring-gray-300 ring-opacity-100 max-w-7xl bg-opacity-80 ">
+    <div className="z-40 text-white top-4 bg-blueP ">
+      <nav className="flex items-center justify-between h-20 p-4 mx-auto shadow-xl text-foreground ring-2 ring-gray-300 ring-opacity-100 max-w-7xl bg-opacity-80">
         <Link href={routes.home}>
-          <img src="/logo.png" alt="logo" className="w-auto h-14 " />
+          <img src="/logo.png" alt="logo" className="w-auto h-10" />
         </Link>
         {user ? (
-          <p className="text-center">¡Hola, {user?.name || "Usuario"}! 👋 </p>
+          <p className="text-center">
+            ¡Hola, {user?.name.split(" ")[0] || "Usuario"}! 👋{" "}
+          </p>
         ) : (
           <p className="text-center">
             ⛑ Tu seguridad es nuestra prioridad. Inicia sesión para continuar. ⛑

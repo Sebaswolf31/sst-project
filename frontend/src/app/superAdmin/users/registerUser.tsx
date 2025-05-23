@@ -44,6 +44,7 @@ const roleOptions = [
   { value: UserRole.RolSuperAdmin, label: "Administrador Superior" },
   { value: UserRole.RolAdministrador, label: "Administrador" },
   { value: UserRole.RolOperario, label: "Operador" },
+  { value: UserRole.RolInspector, label: "Inspector" },
 ];
 const RegisterUser = () => {
   const [showPassword, setShowPassword] = useState(false);
