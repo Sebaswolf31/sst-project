@@ -1,51 +1,34 @@
 "use client";
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-
-type FieldType =
-  | "text"
-  | "number"
-  | "textarea"
-  | "select"
-  | "checkbox"
-  | "radio"
-  | "date";
-
-interface FieldOption {
-  label: string;
-  value: string;
-}
-
-interface Field {
-  id: string;
-  name: string;
-  label: string;
-  type: FieldType;
-  required: boolean;
-  options?: FieldOption[]; // Solo si type === 'select' o 'radio'
-}
+import { FieldType } from "../interface";
+import { IInspection } from "../interface";
+import toast from "react-hot-toast";
+import { createInpectionTemplate } from "../services/inspectiontemplates";
 
 export default function FormBuilder() {
-  const [fields, setFields] = useState<Field[]>([]);
-  const [newField, setNewField] = useState<Omit<Field, "id">>({
-    name: "",
-    label: "",
-    type: "text",
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [inspectionName, setInspectionName] = useState("");
+  const [fields, setFields] = useState<IInspection[]>([]);
+  const [newField, setNewField] = useState<IInspection>({
+    fieldName: "",
+    displayName: "",
+    type: "" as FieldType,
     required: false,
     options: [],
   });
 
   const handleAddField = () => {
-    if (!newField.name || !newField.label) {
-      alert("Completa el nombre y la etiqueta del campo");
+    if (!newField.fieldName || !newField.fieldName) {
+      toast.error("Completa el nombre del campo");
       return;
     }
 
     setFields([...fields, { ...newField, id: uuidv4() }]);
     setNewField({
-      name: "",
-      label: "",
-      type: "text",
+      fieldName: "",
+      displayName: "",
+      type: "" as FieldType,
       required: false,
       options: [],
     });
@@ -57,24 +40,42 @@ export default function FormBuilder() {
 
   const handleAddOption = () => {
     const label = prompt("Etiqueta de la opción:");
-    const value = prompt("Valor de la opción:");
-    if (label && value) {
+    if (label) {
       setNewField({
         ...newField,
-        options: [...(newField.options || []), { label, value }],
+        options: [...(newField.options || []), label],
       });
     }
   };
 
-  const handleSaveTemplate = () => {
-    const plantilla = {
-      name: "Plantilla Inspección SST", // Puedes agregar un input si quieres
-      fieldsDefinition: fields,
-    };
-
-    console.log("Plantilla generada:", JSON.stringify(plantilla, null, 2));
-    alert("Plantilla guardada en consola.");
-    // Aquí podrías hacer un fetch/axios para enviar la plantilla al backend
+  const handleSaveTemplate = async () => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const cleanFields = fields.map(({ id, ...field }) => field);
+      const nameUpperCase =
+        inspectionName.charAt(0).toUpperCase() + inspectionName.slice(1);
+      const InspectionTemplate = {
+        name: nameUpperCase,
+        fields: cleanFields,
+      };
+      await createInpectionTemplate(InspectionTemplate);
+      toast.success("Plantilla guardada");
+      setFields([]);
+      setInspectionName("");
+      setNewField({
+        fieldName: "",
+        displayName: "",
+        type: FieldType.Texto,
+        required: false,
+        options: [],
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Ocurrió un error inesperado");
+      }
+    }
   };
 
   return (
@@ -83,21 +84,28 @@ export default function FormBuilder() {
         Crear nueva plantilla
       </h2>
 
+      <input
+        className="w-full gap-2 p-2 mb-4 border "
+        type="text"
+        placeholder=" Nombre de la inspección"
+        value={inspectionName}
+        onChange={(e) => setInspectionName(e.target.value)}
+      ></input>
       <div className="grid grid-cols-2 gap-2 mb-4">
         <input
           type="text"
-          placeholder="Nombre técnico"
-          value={newField.name}
-          onChange={(e) => setNewField({ ...newField, name: e.target.value })}
+          placeholder="Nombre del campo"
+          value={newField.displayName}
+          onChange={(e) =>
+            setNewField({
+              ...newField,
+              displayName: e.target.value,
+              fieldName: e.target.value,
+            })
+          }
           className="p-2 border"
         />
-        <input
-          type="text"
-          placeholder="Etiqueta (label)"
-          value={newField.label}
-          onChange={(e) => setNewField({ ...newField, label: e.target.value })}
-          className="p-2 border"
-        />
+
         <select
           value={newField.type}
           onChange={(e) =>
@@ -109,11 +117,10 @@ export default function FormBuilder() {
           }
           className="p-2 border"
         >
+          <option value=""> Tipo de campo requerido</option>
           <option value="text">Texto</option>
           <option value="number">Número</option>
-          <option value="textarea">Área de texto</option>
-          <option value="select">Seleccionable</option>
-          <option value="radio">Radio</option>
+          <option value="dropdown">Seleccionable</option>
           <option value="checkbox">Checkbox</option>
           <option value="date">Fecha</option>
         </select>
@@ -126,9 +133,9 @@ export default function FormBuilder() {
             }
             className="mr-2"
           />
-          Requerido
+          Campo Requerido
         </label>
-        {(newField.type === "select" || newField.type === "radio") && (
+        {newField.type === "dropdown" && (
           <button
             type="button"
             onClick={handleAddOption}
@@ -144,9 +151,7 @@ export default function FormBuilder() {
           <p className="text-sm font-medium">Opciones:</p>
           <ul className="pl-5 text-sm list-disc">
             {newField.options.map((opt, i) => (
-              <li key={i}>
-                {opt.label} ({opt.value})
-              </li>
+              <li key={i}>{opt}</li>
             ))}
           </ul>
         </div>
@@ -165,12 +170,13 @@ export default function FormBuilder() {
         {fields.map((field) => (
           <li key={field.id} className="flex items-center justify-between mb-1">
             <span>
-              <strong>{field.label}</strong> ({field.name}) - {field.type}
+              <strong>{field.displayName}</strong> ({field.displayName}) -{" "}
+              {field.type}
               {field.required ? " *" : ""}
             </span>
             <button
               className="text-sm text-red-600"
-              onClick={() => handleRemoveField(field.id)}
+              onClick={() => handleRemoveField(field.id!)}
             >
               Eliminar
             </button>
