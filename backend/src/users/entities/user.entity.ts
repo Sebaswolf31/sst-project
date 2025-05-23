@@ -8,13 +8,14 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Company } from '../../company/entities/company.entity';
-import { Risk } from '../../risk/entities/risk.entity';
-import { Inspection } from '../../inspection/entities/inspection.entity';
+import { Inspection } from '../../inspections/entities/inspection.entity';
+
 
 export enum UserRole {
   SUPERADMIN = 'superadmin',
   ADMIN = 'admin',
   OPERATOR = 'operator',
+  INSPECTOR = 'inspector',
 }
 
 @Entity()
@@ -57,10 +58,6 @@ export class User {
   @JoinColumn({ name: 'companyId' }) // ← declara la columna FK
   company: Company;
 
-  // Relaciones con otras entidades (creaciones)
-  @OneToMany(() => Risk, (risk) => risk.createdBy)
-  risks: Risk[];
-
-  @OneToMany(() => Inspection, (inspection) => inspection.createdBy)
+  @OneToMany(() => Inspection, (inspection) => inspection.inspector)
   inspections: Inspection[];
 }
