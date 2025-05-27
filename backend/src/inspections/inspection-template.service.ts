@@ -43,4 +43,17 @@ export class InspectionTemplateService {
 
     return template;
   }
+
+  async getAllTemplates(pagination: {
+    page: number;
+    limit: number;
+  }): Promise<{ data: InspectionTemplate[]; total: number }> {
+    const [data, total] = await this.templateRepository.findAndCount({
+      skip: (pagination.page - 1) * pagination.limit,
+      take: pagination.limit,
+      order: { createdAt: 'DESC' },
+    });
+
+    return { data, total };
+  }
 }
