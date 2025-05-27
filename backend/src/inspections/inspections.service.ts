@@ -12,6 +12,8 @@ import { User } from '../users/entities/user.entity';
 import { CreateInspectionDto } from './dto/create-inspection.dto';
 import { DynamicFieldDefinition } from './entities/inspection-template.entity';
 import { UserRole } from '../users/entities/user.entity';
+import { FilterInspectionDto } from './dto/update-inspection.dto';
+import { UpdateInspectionDto } from './dto/update-inspection.dto';
 
 @Injectable()
 export class InspectionService {
@@ -97,5 +99,86 @@ export class InspectionService {
       where: { inspectorId },
       relations: ['template'],
     });
+  }
+
+  async findAll(
+    filter: FilterInspectionDto,
+    pagination: { page: number; limit: number },
+  ): Promise<{ data: Inspection[]; total: number }> {
+    const query = this.inspectionRepository
+      .createQueryBuilder('inspection')
+      .leftJoinAndSelect('inspection.inspector', 'inspector')
+      .leftJoinAndSelect('inspection.template', 'template');
+
+    // Aplicar filtros
+    if (filter.title) {
+      query.andWhere('LOWER(inspection.title) LIKE :title', {
+        title: `%${filter.title.toLowerCase()}%`,
+      });
+    }
+
+    if (filter.startDate && filter.endDate) {
+      query.andWhere('inspection.date BETWEEN :start AND :end', {
+        start: filter.startDate,
+        end: filter.endDate,
+      });
+    }
+
+    // Paginación
+    const [data, total] = await query
+      .skip((pagination.page - 1) * pagination.limit)
+      .take(pagination.limit)
+      .getManyAndCount();
+
+    return { data, total };
+  }
+
+  async findOne(id: string): Promise<Inspection> {
+    const inspection = await this.inspectionRepository.findOne({
+      where: { id },
+      relations: ['inspector', 'template'],
+    });
+
+    if (!inspection) {
+      throw new NotFoundException('Inspección no encontrada');
+    }
+
+    return inspection;
+  }
+
+  async update(id: string, dto: UpdateInspectionDto): Promise<Inspection> {
+    const inspection = await this.findOne(id);
+
+    // Validar plantilla si se actualiza
+    if (dto.templateId) {
+      const template = await this.templateRepository.findOneBy({
+        id: dto.templateId,
+      });
+
+      if (!template) {
+        throw new NotFoundException('Plantilla no encontrada');
+      }
+
+      inspection.template = template;
+    }
+
+    // Validar campos dinámicos
+    if (dto.dynamicFields) {
+      this.validateDynamicFields(dto.dynamicFields, inspection.template.fields);
+    }
+
+    // Actualizar campos
+    return this.inspectionRepository.save({
+      ...inspection,
+      ...dto,
+    });
+  }
+
+  async remove(id: string): Promise<void> {
+    const result = await this.inspectionRepository.delete(id);
+
+    if (result.affected === 0) {
+      throw new NotFoundException('Inspección no encontrada');
+    }
   }
 }
