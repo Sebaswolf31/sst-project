@@ -6,6 +6,9 @@ import {
   Body,
   Param,
   ParseUUIDPipe,
+  DefaultValuePipe,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { InspectionTemplateService } from './inspection-template.service';
 import { CreateInspectionTemplateDto } from './dto/inspection-template.dto';
@@ -25,5 +28,13 @@ export class InspectionTemplateController {
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string): Promise<InspectionTemplate> {
     return this.templateService.getTemplateById(id);
+  }
+
+  @Get()
+  async getAllTemplates(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ): Promise<{ data: InspectionTemplate[]; total: number }> {
+    return this.templateService.getAllTemplates({ page, limit });
   }
 }
