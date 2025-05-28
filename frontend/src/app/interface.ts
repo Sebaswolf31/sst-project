@@ -38,9 +38,18 @@ export interface IInspection {
   type: FieldType;
   required: boolean;
   options?: string[];
+  value?: string | number | boolean | Date;
 }
 export interface CreateInspectionTemplateDto {
   id?: string;
   name: string;
   fields: IInspection[];
+}
+export interface CreateInspection {
+  id?: string;
+  title: string;
+  date: Date;
+  inspectorId?: string;
+  templateId: string;
+  dynamicFields: Record<string, unknown>;
 }

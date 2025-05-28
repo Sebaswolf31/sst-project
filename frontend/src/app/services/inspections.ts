@@ -1,20 +1,14 @@
 "use server";
 import axios from "axios";
-import { CreateInspectionTemplateDto } from "../interface";
+import { CreateInspection } from "../interface";
 const axiosApiBack = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
-export const getInpectionTemplate = async (
-  InspectionTemplate: CreateInspectionTemplateDto
-) => {
+export const createInspection = async (inspection: CreateInspection) => {
   try {
-    const response = await axiosApiBack.post(
-      "/inspection-templates",
-      InspectionTemplate
-    );
-    if (response.status === 200) {
-      console.log("Exito", response.data);
-    }
+    const response = await axiosApiBack.post("/inspections", inspection);
+    console.log("Respuesta de la API CREATEINSPECTIONS:", response.data);
+    return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("Error desde el backend:", error.response.data);
