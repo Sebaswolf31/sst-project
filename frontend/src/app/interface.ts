@@ -2,6 +2,7 @@ export enum UserRole {
   RolSuperAdmin = "superadmin",
   RolAdministrador = "admin",
   RolOperario = "operator",
+  RolInspector = "inspector",
 }
 export interface IUser {
   id?: string;
@@ -22,4 +23,33 @@ export interface IUserLogin {
 export interface ICompany {
   name: string;
   id?: string;
+}
+export enum FieldType {
+  Texto = "text",
+  Numero = "number",
+  Checkbox = "checkbox",
+  Fecha = "date",
+  Opciones = "dropdown",
+}
+export interface IInspection {
+  id?: string;
+  fieldName: string;
+  displayName: string;
+  type: FieldType;
+  required: boolean;
+  options?: string[];
+  value?: string | number | boolean | Date;
+}
+export interface CreateInspectionTemplateDto {
+  id?: string;
+  name: string;
+  fields: IInspection[];
+}
+export interface CreateInspection {
+  id?: string;
+  title: string;
+  date: Date;
+  inspectorId?: string;
+  templateId: string;
+  dynamicFields: Record<string, unknown>;
 }

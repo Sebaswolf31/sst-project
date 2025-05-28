@@ -1,11 +1,26 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import CreateCompany from "./createCompany";
 import Accordion from "@/app/components/accordion";
 import GetCompany from "./getCompany";
 import GetCompanies from "./getCompanies";
-
+import { useAuth } from "@/app/contexts/authContext";
+import { isSuperAdmin } from "@/app/helpers/authhelpers";
+import { useRouter } from "next/navigation";
+import { routes } from "@/app/routes/routes";
 const Companies = () => {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isSuperAdmin(user)) {
+      router.push(routes.home);
+    }
+  }, [user]);
+
+  if (!isSuperAdmin(user)) {
+    return null;
+  }
   return (
     <div>
       <div className="w-full p-4 rounded-t-xl">

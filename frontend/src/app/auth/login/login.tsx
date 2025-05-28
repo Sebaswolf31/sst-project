@@ -64,7 +64,7 @@ const Login = () => {
 
   return (
     <div className="w-full max-w-md p-8 bg-white shadow-lg bg-opacity-20 rounded-2xl backdrop-blur-md">
-      <h2 className="mb-6 text-3xl font-bold text-center text-foreground">
+      <h2 className="mb-6 text-3xl font-bold text-center text-white text-foreground">
         Iniciar Sesión
       </h2>
 
@@ -104,7 +104,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`w-full p-3 font-semibold text-foreground  px-6 py-2 mt-4 transition rounded-md font-poppins bg-fondo text-foreground hover:bg-verde hover:scale-110 ring-2 ring-gray-300 ring-opacity-100
+              className={`w-full p-3 font-semibold text-white  px-6 py-2 mt-4 transition rounded-md font-poppins bg-fondo text-foreground hover:bg-verde hover:scale-110 ring-2 ring-gray-300 ring-opacity-100
                   ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               {isSubmitting ? "Iniciando..." : "Iniciar Sesión"}

@@ -10,11 +10,14 @@ import { useAuth } from "@/app/contexts/authContext";
 
 const roleOptions = [
   { value: "", label: "Seleccione un rol" },
-  { value: UserRole.RolSuperAdmin, label: "Administrador Superior" },
   { value: UserRole.RolAdministrador, label: "Administrador" },
   { value: UserRole.RolOperario, label: "Operador" },
 ];
-
+const roleLabels: Record<UserRole, string> = {
+  [UserRole.RolSuperAdmin]: "Súper Administrador",
+  [UserRole.RolAdministrador]: "Administrador",
+  [UserRole.RolOperario]: "Operador",
+};
 const GetUsers = () => {
   const [searchedUsers, setSearchedUsers] = useState<IUser[]>([]);
   const [companyId, setCompanyId] = useState<string>("");
@@ -196,7 +199,8 @@ const GetUsers = () => {
                     <strong>Identificacion:</strong> {user.identification}
                   </p>
                   <p>
-                    <strong>Rol:</strong> {user.role}
+                    <strong>Rol:</strong>
+                    {roleLabels[user.role as UserRole]} {}
                   </p>
                   <button
                     onClick={() => handleEdit(user)}
