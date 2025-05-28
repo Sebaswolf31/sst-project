@@ -1,8 +1,12 @@
 import React from "react";
-import FormBuilder from "./FormBuilder";
+import Inspections from "./Inspections";
 
 const Doview = () => {
-  return <FormBuilder />;
+  return (
+    <div>
+      <Inspections></Inspections>
+    </div>
+  );
 };
 
 export default Doview;

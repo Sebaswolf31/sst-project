@@ -40,6 +40,7 @@ export interface IInspection {
   options?: string[];
 }
 export interface CreateInspectionTemplateDto {
+  id?: string;
   name: string;
   fields: IInspection[];
 }

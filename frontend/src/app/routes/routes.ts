@@ -4,5 +4,6 @@ export const routes = {
   users: "/superAdmin/users",
   companies: "/superAdmin/companies",
   userAdmin: "admin/users",
-  act: "/do",
+  act: "/act",
+  do: "/do",
 };
