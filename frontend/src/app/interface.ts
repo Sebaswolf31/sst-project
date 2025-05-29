@@ -53,3 +53,19 @@ export interface CreateInspection {
   templateId: string;
   dynamicFields: Record<string, unknown>;
 }
+export interface DynamicField {
+  fieldName: string;
+  value: string | number | boolean | null;
+  fieldType: string;
+}
+
+export interface IGetInspection {
+  id?: string;
+  title: string;
+  date: Date;
+  dynamicFields: DynamicField[];
+  inspector: IUser;
+  inspectorId: string;
+  template: CreateInspectionTemplateDto;
+  createdAt: Date;
+}
