@@ -199,6 +199,14 @@ const Inspections = () => {
 
   return (
     <div className="w-auto p-4 ">
+      <h1 className="text-2xl font-semibold text-center text-gray-800 ">
+        {" "}
+        Realizar Inspecciones
+      </h1>
+      <p className="mb-2 text-xs font-thin text-center text-gray-800 ">
+        Realiza inspecciones detalladas y precisas para garantizar la calidad y
+        seguridad de tus procesos.
+      </p>
       {templates.map((template) => (
         <details
           key={template.id}
@@ -207,6 +215,15 @@ const Inspections = () => {
           <summary className="font-semibold cursor-pointer">
             {template.name}
           </summary>
+          <p className="text-sm">
+            {" "}
+            Fecha:
+            {new Date().toLocaleDateString("es-CO", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+            })}
+          </p>{" "}
           <form onSubmit={(e) => handleSubmit(e, template)}>
             {template.fields.map((field, index) => (
               <div key={index} className="mb-4">
