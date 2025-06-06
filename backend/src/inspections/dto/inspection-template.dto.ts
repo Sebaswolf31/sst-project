@@ -26,4 +26,6 @@ export class CreateInspectionTemplateDto {
   @ValidateNested({ each: true })
   @Type(() => DynamicFieldDefinitionDto)
   fields: DynamicFieldDefinitionDto[];
+
+  
 }

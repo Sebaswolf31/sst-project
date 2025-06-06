@@ -14,6 +14,9 @@ import { DynamicFieldDefinition } from './entities/inspection-template.entity';
 import { UserRole } from '../users/entities/user.entity';
 import { FilterInspectionDto } from './dto/update-inspection.dto';
 import { UpdateInspectionDto } from './dto/update-inspection.dto';
+import {  InspectionType } from './entities/inspection.entity';
+import { FileUploadService } from '../common/file-upload.service';
+import { FormType } from './enums/form-type.enum';
 
 @Injectable()
 export class InspectionService {
@@ -24,6 +27,7 @@ export class InspectionService {
     private templateRepository: Repository<InspectionTemplate>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private readonly fileUploadService: FileUploadService,
   ) {}
 
   async createInspection(dto: CreateInspectionDto): Promise<Inspection> {
@@ -46,10 +50,17 @@ export class InspectionService {
       );
     }
 
+    // Añadir validación para los nuevos campos
+
+    if (!Object.values(InspectionType).includes(dto.inspectionType)) {
+      throw new BadRequestException('Tipo de inspección inválido');
+    }
+
     this.validateDynamicFields(dto.dynamicFields, template.fields);
 
     return this.inspectionRepository.save({
       ...dto,
+      formType: template.formType, // Heredar de la plantilla
       inspector: { id: dto.inspectorId },
       template: { id: dto.templateId },
     });
@@ -181,4 +192,18 @@ export class InspectionService {
       throw new NotFoundException('Inspección no encontrada');
     }
   }
+
+  async updateAttachment(id: string, filePath: string): Promise<Inspection> {
+    const inspection = await this.findOne(id);
+
+    // Eliminar archivo anterior si existe
+    if (inspection.attachment) {
+      await this.fileUploadService.deleteFile(inspection.attachment);
+    }
+
+    inspection.attachment = filePath;
+    return this.inspectionRepository.save(inspection);
+  }
+
+  
 }

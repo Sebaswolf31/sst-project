@@ -13,16 +13,24 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  UseInterceptors,
+  BadRequestException,
+  UploadedFile,
 } from '@nestjs/common';
 import { InspectionService } from './inspections.service';
 import { CreateInspectionDto } from './dto/create-inspection.dto';
 import { Inspection } from './entities/inspection.entity';
 import { FilterInspectionDto } from './dto/update-inspection.dto';
 import { UpdateInspectionDto } from './dto/update-inspection.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileUploadService } from '../common/file-upload.service';
 
 @Controller('inspections')
 export class InspectionController {
-  constructor(private readonly inspectionService: InspectionService) {}
+  constructor(
+    private readonly inspectionService: InspectionService,
+    private readonly fileUploadService: FileUploadService,
+  ) {}
 
   @Post()
   create(@Body() dto: CreateInspectionDto): Promise<Inspection> {
@@ -62,5 +70,39 @@ export class InspectionController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.inspectionService.remove(id);
+  }
+
+  @Post(':id/attachment')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadAttachment(
+    @Param('id', ParseUUIDPipe) id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) {
+      throw new BadRequestException('No se ha subido ningún archivo');
+    }
+
+    try {
+      const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+      const filePath = await this.fileUploadService.saveFile(
+        file,
+        'inspections',
+        allowedTypes,
+      );
+
+      return this.inspectionService.updateAttachment(id, filePath);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  @Patch(':id/attachment')
+  @UseInterceptors(FileInterceptor('file'))
+  async updateAttachment(
+    @Param('id', ParseUUIDPipe) id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<Inspection> {
+    const filePath = await this.fileUploadService.saveFile(file, 'inspections');
+    return this.inspectionService.updateAttachment(id, filePath);
   }
 }
