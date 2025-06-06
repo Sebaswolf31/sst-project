@@ -7,7 +7,8 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { FormType, InspectionType } from '../entities/inspection.entity'; // Importa los enums
+import { InspectionType } from '../entities/inspection.entity'; // Importa los enums
+import { FormType } from '../enums/form-type.enum';
 
 export class CreateInspectionDto {
   @IsNotEmpty()

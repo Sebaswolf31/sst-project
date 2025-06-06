@@ -5,7 +5,7 @@ import {
   Column,
   CreateDateColumn,
 } from 'typeorm';
-import { FormType } from './inspection.entity'; // Asegúrate de que este enum esté definido en tu entidad de inspección
+import { FormType } from '../enums/form-type.enum'; // Asegúrate de que este enum esté definido en tu entidad de inspección
 
 @Entity()
 export class InspectionTemplate {
@@ -28,10 +28,10 @@ export class InspectionTemplate {
     }
   }
 
-   @Column({
+  @Column({
     type: 'enum',
     enum: FormType,
-    default: FormType.WORK_AREAS
+    default: FormType.WORK_AREAS,
   })
   formType: FormType;
 }

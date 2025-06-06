@@ -14,8 +14,9 @@ import { DynamicFieldDefinition } from './entities/inspection-template.entity';
 import { UserRole } from '../users/entities/user.entity';
 import { FilterInspectionDto } from './dto/update-inspection.dto';
 import { UpdateInspectionDto } from './dto/update-inspection.dto';
-import { FormType, InspectionType } from './entities/inspection.entity';
+import {  InspectionType } from './entities/inspection.entity';
 import { FileUploadService } from '../common/file-upload.service';
+import { FormType } from './enums/form-type.enum';
 
 @Injectable()
 export class InspectionService {

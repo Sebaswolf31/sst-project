@@ -9,14 +9,8 @@ import {
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { InspectionTemplate } from './inspection-template.entity';
-
-// Definir ENUMs para los nuevos campos
-export enum FormType {
-  WORK_AREAS = 'areas y puestos de trabajo',
-  MACHINERY = 'maquinaria y equipos',
-  PROTECTIVE_EQUIPMENT = 'elementos de protección personal',
-  MEDICAL = 'botiquines y camillas',
-}
+import { FormType } from '../enums/form-type.enum';
+export { FormType }; // <-- agrega esto
 
 export enum InspectionType {
   SPONTANEOUS = 'espontanea',
