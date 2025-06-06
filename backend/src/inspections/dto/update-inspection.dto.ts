@@ -2,6 +2,7 @@ import { PartialType } from '@nestjs/mapped-types';
 import { CreateInspectionDto } from './create-inspection.dto';
 import { IsObject, IsOptional, IsDateString } from 'class-validator';
 
+
 export class UpdateInspectionDto extends PartialType(CreateInspectionDto) {
   @IsOptional()
   @IsObject()

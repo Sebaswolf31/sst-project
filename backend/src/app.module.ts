@@ -9,7 +9,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { CompanyModule } from './company/company.module';
 import { InspectionsModule } from './inspections/inspections.module';
-
+import { CommonModule } from './common/common.module';
 
 
 
@@ -20,6 +20,7 @@ import { InspectionsModule } from './inspections/inspections.module';
     AuthModule,
     CompanyModule,
     InspectionsModule,
+    CommonModule,
 
     ConfigModule.forRoot({
       isGlobal: true,
@@ -40,9 +41,6 @@ import { InspectionsModule } from './inspections/inspections.module';
         return dbConfig;
       },
     }),
-
-    InspectionsModule,
-
   ],
   controllers: [AppController],
   providers: [AppService],

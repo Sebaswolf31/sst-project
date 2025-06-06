@@ -1,5 +1,13 @@
-// inspections/dto/create-inspection.dto.ts
-import { IsNotEmpty, IsISO8601, IsUUID, IsObject } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsISO8601,
+  IsUUID,
+  IsObject,
+  IsEnum,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { FormType, InspectionType } from '../entities/inspection.entity'; // Importa los enums
 
 export class CreateInspectionDto {
   @IsNotEmpty()
@@ -16,4 +24,13 @@ export class CreateInspectionDto {
 
   @IsObject()
   dynamicFields: Record<string, any>;
+
+  // Nuevos campos
+
+  @IsEnum(InspectionType)
+  inspectionType: InspectionType;
+
+  @IsOptional()
+  @IsString()
+  attachment?: string; // Almacenará la ruta del archivo
 }
