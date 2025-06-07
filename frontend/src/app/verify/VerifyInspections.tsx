@@ -38,7 +38,7 @@ const formatearInspeccion = (inspeccion: IGetInspection) => {
 
   return {
     ...inspeccion,
-    camposFormateados, // ← Ya existe arriba, se puede usar aquí
+    camposFormateados,
   };
 };
 
@@ -92,14 +92,24 @@ const VerifyInspections = () => {
               })}
             </p>
             <p className="text-sm">
-              <strong>Responsable:</strong> {inspection.inspector?.name}
+              <strong>Codigo:</strong> {inspection.id}
             </p>
             <p className="text-sm">
-              <strong>Codigo:</strong> {inspection.template.id}
+              <strong>Tipo de Formulario de Inspeccion:</strong>{" "}
+              {inspection.formType &&
+                inspection.formType.charAt(0).toUpperCase() +
+                  inspection.formType.slice(1)}
             </p>
             <p className="text-sm">
-              <strong>Codigo:</strong>
+              <strong>Tipo de inspección:</strong>{" "}
+              {inspection.inspectionType &&
+                inspection.inspectionType.charAt(0).toUpperCase() +
+                  inspection.inspectionType.slice(1)}
             </p>
+            <p className="text-sm">
+              <strong>Responsable: </strong> {inspection.inspector?.name}
+            </p>
+
             {inspection.camposFormateados &&
               inspection.camposFormateados.length > 0 && (
                 <div className="pl-4 mt-2">
@@ -108,7 +118,9 @@ const VerifyInspections = () => {
                       <span className="font-semibold capitalize">
                         {campo.label}:
                       </span>{" "}
-                      {campo.valorFormateado}
+                      {campo.valorFormateado &&
+                        campo.valorFormateado.charAt(0).toUpperCase() +
+                          campo.valorFormateado.slice(1)}
                     </p>
                   ))}
                 </div>

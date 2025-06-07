@@ -52,6 +52,12 @@ export interface CreateInspectionTemplateDto {
   id?: string;
   name: string;
   fields: IInspection[];
+  formType?: string;
+  inspectionsType?: InspectionType;
+}
+export enum InspectionType {
+  SPONTANEOUS = "espontanea",
+  PLANNED = "planeada",
 }
 export interface CreateInspection {
   id?: string;
@@ -59,6 +65,8 @@ export interface CreateInspection {
   date: Date;
   inspectorId?: string;
   templateId: string;
+  formType: string;
+  inspectionsType: InspectionType;
   dynamicFields: Record<string, unknown>;
 }
 export interface DynamicField {
@@ -76,6 +84,8 @@ export interface IGetInspection {
   inspectorId: string;
   template: CreateInspectionTemplateDto;
   createdAt: Date;
+  formType: string;
+  inspectionType: string;
 }
 export interface IFormattedInspection extends IGetInspection {
   camposFormateados: { key: string; valorFormateado: string; label: string }[];
