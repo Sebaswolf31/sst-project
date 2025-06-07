@@ -30,6 +30,7 @@ const Inspections = () => {
     const fetchTemplates = async () => {
       try {
         const res = await getInpectionTemplate();
+        console.log(res);
         setTemplates(res.data);
       } catch (error) {
         console.error("Error al cargar plantillas:", error);
@@ -224,6 +225,7 @@ const Inspections = () => {
               year: "numeric",
             })}
           </p>{" "}
+          <p> </p>
           <form onSubmit={(e) => handleSubmit(e, template)}>
             {template.fields.map((field, index) => (
               <div key={index} className="mb-4">
