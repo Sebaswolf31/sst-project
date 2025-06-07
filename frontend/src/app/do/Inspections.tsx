@@ -17,6 +17,10 @@ import { useAuth } from "../contexts/authContext";
 const Inspections = () => {
   const [templates, setTemplates] = useState<CreateInspectionTemplateDto[]>([]);
   const { user } = useAuth();
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+
   const [formData, setFormData] = useState<{
     [templateId: string]: {
       [fieldName: string]: any;
@@ -29,8 +33,10 @@ const Inspections = () => {
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
-        const res = await getInpectionTemplate();
+        const res = await getInpectionTemplate(page, limit);
+        console.log("Respuesta con page", page, ":", res.data);
         setTemplates(res.data);
+        setTotal(res.total);
       } catch (error) {
         console.error("Error al cargar plantillas:", error);
         toast.error("Error al traer plantillas");
@@ -38,7 +44,14 @@ const Inspections = () => {
     };
 
     fetchTemplates();
-  }, []);
+  }, [page, limit]);
+  const goToPreviousPage = () => {
+    setPage((p) => Math.max(p - 1, 1));
+  };
+  const maxPage = Math.ceil(total / limit);
+  const goToNextPage = () => {
+    setPage((p) => Math.min(p + 1, maxPage));
+  };
   const handleCancel = (templateId: string) => {
     {
       setFormData((prev) => ({
@@ -224,6 +237,7 @@ const Inspections = () => {
               year: "numeric",
             })}
           </p>{" "}
+          <p> </p>
           <form onSubmit={(e) => handleSubmit(e, template)}>
             {template.fields.map((field, index) => (
               <div key={index} className="mb-4">
@@ -255,6 +269,22 @@ const Inspections = () => {
           </form>
         </details>
       ))}
+      <div className="flex justify-center gap-2 mt-4">
+        <button
+          onClick={goToPreviousPage}
+          disabled={page === 1}
+          className="px-2 py-1 text-xs text-white rounded bg-blueP hover:bg-greenP"
+        >
+          Anterior
+        </button>
+        <button
+          onClick={goToNextPage}
+          disabled={page * limit >= total}
+          className="px-2 py-1 text-xs text-white rounded bg-blueP hover:bg-greenP"
+        >
+          Siguiente
+        </button>
+      </div>
     </div>
   );
 };

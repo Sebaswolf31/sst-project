@@ -6,4 +6,6 @@ export const routes = {
   userAdmin: "admin/users",
   act: "/act",
   do: "/do",
+  plan: "/plan",
+  verify: "/verify",
 };

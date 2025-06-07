@@ -21,7 +21,7 @@ const Navbar = () => {
 
   return (
     <div className="z-40 text-white top-4 bg-blueP ">
-      <nav className="flex items-center justify-between h-20 p-4 mx-auto shadow-xl text-foreground ring-2 ring-gray-300 ring-opacity-100 max-w-7xl bg-opacity-80">
+      <nav className="flex items-center justify-between h-20 p-4 mx-auto shadow-xl text-foreground max-w-7xl bg-opacity-80">
         <Link href={routes.home}>
           <img src="/logo.png" alt="logo" className="w-auto h-10" />
         </Link>
@@ -99,10 +99,10 @@ const Navbar = () => {
               >
                 Usuarios
               </Link>
-              <Link href={routes.home}>Planear</Link>
+              <Link href={routes.plan}>Planear</Link>
 
-              <Link href={routes.act}>Hacer</Link>
-              <Link href={routes.home}>Verificar</Link>
+              <Link href={routes.do}>Hacer</Link>
+              <Link href={routes.verify}>Verificar</Link>
 
               <Link href={routes.act}>Actuar</Link>
             </div>

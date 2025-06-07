@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { FieldType } from "../interface";
+import { FieldType, InspectionType } from "../interface";
 import { IInspection } from "../interface";
 import toast from "react-hot-toast";
 import { createInpectionTemplate } from "../services/inspectiontemplates";
@@ -13,6 +13,8 @@ export default function FormBuilder() {
   const [newField, setNewField] = useState<IInspection>({
     fieldName: "",
     displayName: "",
+    date: "" as unknown as Date,
+    inspectionType: "" as InspectionType,
     type: "" as FieldType,
     required: false,
     options: [],
@@ -28,6 +30,8 @@ export default function FormBuilder() {
     setNewField({
       fieldName: "",
       displayName: "",
+      date: "" as unknown as Date,
+      inspectionType: "" as InspectionType,
       type: "" as FieldType,
       required: false,
       options: [],
@@ -56,6 +60,7 @@ export default function FormBuilder() {
         inspectionName.charAt(0).toUpperCase() + inspectionName.slice(1);
       const InspectionTemplate = {
         name: nameUpperCase,
+        date: new Date(),
         fields: cleanFields,
       };
       await createInpectionTemplate(InspectionTemplate);
@@ -65,6 +70,8 @@ export default function FormBuilder() {
       setNewField({
         fieldName: "",
         displayName: "",
+        date: "" as unknown as Date,
+        inspectionType: "" as InspectionType,
         type: FieldType.Texto,
         required: false,
         options: [],
@@ -83,15 +90,43 @@ export default function FormBuilder() {
       <h2 className="mb-4 text-xl font-bold text-center">
         Crear nueva plantilla
       </h2>
-
+      <p className="pb-2 pl-2 text-sm">
+        Creación Plantilla :{" "}
+        {new Date().toLocaleDateString("es-CO", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        })}
+      </p>{" "}
       <input
         className="w-full gap-2 p-2 mb-4 border "
         type="text"
-        placeholder=" Nombre de la inspección"
+        placeholder=" Nombre de la plantilla de inspección"
         value={inspectionName}
         onChange={(e) => setInspectionName(e.target.value)}
       ></input>
       <div className="grid grid-cols-2 gap-2 mb-4">
+        <select
+          value={newField.inspectionType}
+          onChange={(e) =>
+            setNewField({
+              ...newField,
+              type: e.target.value as FieldType,
+              options: [],
+            })
+          }
+          className="block w-full col-span-2 p-2 border "
+        >
+          <option value=""> Tipo de plantilla de inspeccion</option>
+          <option value="areas y puestos de trabajo">
+            Areas y puestos de trabajo
+          </option>
+          <option value="maquinaria y equipos">Maquinaria y equipos</option>
+          <option value="elementos de protección personal">
+            Elementos de protección personal
+          </option>
+          <option value="botiquines y camillas">Botiquines y camillas</option>
+        </select>
         <input
           type="text"
           placeholder="Nombre del campo"
@@ -105,7 +140,6 @@ export default function FormBuilder() {
           }
           className="p-2 border"
         />
-
         <select
           value={newField.type}
           onChange={(e) =>
@@ -145,7 +179,6 @@ export default function FormBuilder() {
           </button>
         )}
       </div>
-
       {newField.options && newField.options.length > 0 && (
         <div className="mb-4">
           <p className="text-sm font-medium">Opciones:</p>
@@ -156,7 +189,6 @@ export default function FormBuilder() {
           </ul>
         </div>
       )}
-
       <button
         type="button"
         onClick={handleAddField}
@@ -164,7 +196,6 @@ export default function FormBuilder() {
       >
         Añadir campo a la plantilla
       </button>
-
       <h3 className="mb-2 text-lg font-semibold">Campos actuales:</h3>
       <ul className="mb-4">
         {fields.map((field) => (
@@ -183,7 +214,6 @@ export default function FormBuilder() {
           </li>
         ))}
       </ul>
-
       <button
         type="button"
         onClick={handleSaveTemplate}
