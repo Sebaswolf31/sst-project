@@ -28,9 +28,13 @@ export const createInpectionTemplate = async (
     }
   }
 };
-export const getInpectionTemplate = async () => {
+export const getInpectionTemplate = async (page: number, limit: number) => {
   try {
-    const response = await axiosApiBack.get("/inspection-templates");
+    const params: Record<string, string | number> = { page, limit };
+
+    const response = await axiosApiBack.get("/inspection-templates", {
+      params,
+    });
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response) {

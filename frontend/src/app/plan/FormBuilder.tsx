@@ -90,7 +90,14 @@ export default function FormBuilder() {
       <h2 className="mb-4 text-xl font-bold text-center">
         Crear nueva plantilla
       </h2>
-
+      <p className="pb-2 pl-2 text-sm">
+        Creación Plantilla :{" "}
+        {new Date().toLocaleDateString("es-CO", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        })}
+      </p>{" "}
       <input
         className="w-full gap-2 p-2 mb-4 border "
         type="text"
@@ -99,15 +106,6 @@ export default function FormBuilder() {
         onChange={(e) => setInspectionName(e.target.value)}
       ></input>
       <div className="grid grid-cols-2 gap-2 mb-4">
-        <p className="text-sm">
-          {" "}
-          Creación Plantillan :{" "}
-          {new Date().toLocaleDateString("es-CO", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })}
-        </p>{" "}
         <select
           value={newField.inspectionType}
           onChange={(e) =>
@@ -117,7 +115,7 @@ export default function FormBuilder() {
               options: [],
             })
           }
-          className="p-2 border"
+          className="block w-full col-span-2 p-2 border "
         >
           <option value=""> Tipo de plantilla de inspeccion</option>
           <option value="areas y puestos de trabajo">
@@ -181,7 +179,6 @@ export default function FormBuilder() {
           </button>
         )}
       </div>
-
       {newField.options && newField.options.length > 0 && (
         <div className="mb-4">
           <p className="text-sm font-medium">Opciones:</p>
@@ -192,7 +189,6 @@ export default function FormBuilder() {
           </ul>
         </div>
       )}
-
       <button
         type="button"
         onClick={handleAddField}
@@ -200,7 +196,6 @@ export default function FormBuilder() {
       >
         Añadir campo a la plantilla
       </button>
-
       <h3 className="mb-2 text-lg font-semibold">Campos actuales:</h3>
       <ul className="mb-4">
         {fields.map((field) => (
@@ -219,7 +214,6 @@ export default function FormBuilder() {
           </li>
         ))}
       </ul>
-
       <button
         type="button"
         onClick={handleSaveTemplate}

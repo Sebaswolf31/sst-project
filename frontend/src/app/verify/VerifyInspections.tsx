@@ -1,19 +1,59 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { useEffect, useState } from "react";
 import { getInspections } from "../services/inspections";
-import { IGetInspection } from "../interface";
+import { FieldType, IFormattedInspection, IGetInspection } from "../interface";
+
+const formatearInspeccion = (inspeccion: IGetInspection) => {
+  const camposFormateados = Object.entries(inspeccion.dynamicFields).map(
+    ([key, value]) => {
+      const fieldInfo = inspeccion.template.fields.find(
+        (f) => f.fieldName === key
+      );
+
+      let valorFormateado: string = String(value);
+
+      if (
+        fieldInfo?.type === FieldType.Fecha &&
+        (typeof value === "string" || value instanceof Date)
+      ) {
+        valorFormateado = new Date(value).toLocaleDateString("es-CO", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        });
+      }
+
+      if (fieldInfo?.type === FieldType.Checkbox) {
+        valorFormateado = value ? "Sí" : "No";
+      }
+
+      return {
+        key,
+        label: fieldInfo?.fieldName || key,
+        valorFormateado,
+      };
+    }
+  );
+
+  return {
+    ...inspeccion,
+    camposFormateados, // ← Ya existe arriba, se puede usar aquí
+  };
+};
 
 const VerifyInspections = () => {
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
-  const [inspections, setInspections] = useState<IGetInspection[]>([]);
+  const [inspections, setInspections] = useState<IFormattedInspection[]>([]);
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       const res = await getInspections(page, limit);
       console.log("Respuesta con page", page, ":", res.data);
-      setInspections(res.data);
+      const inspeccionesFormateadas = res.data.map(formatearInspeccion);
+      setInspections(inspeccionesFormateadas);
       setTotal(res.total);
     };
     fetchData();
@@ -54,20 +94,23 @@ const VerifyInspections = () => {
             <p className="text-sm">
               <strong>Responsable:</strong> {inspection.inspector?.name}
             </p>
-
-            {inspection.dynamicFields &&
-              Object.keys(inspection.dynamicFields).length > 0 && (
+            <p className="text-sm">
+              <strong>Codigo:</strong> {inspection.template.id}
+            </p>
+            <p className="text-sm">
+              <strong>Codigo:</strong>
+            </p>
+            {inspection.camposFormateados &&
+              inspection.camposFormateados.length > 0 && (
                 <div className="pl-4 mt-2">
-                  {Object.entries(inspection.dynamicFields).map(
-                    ([key, value], index) => (
-                      <p key={index} className="text-sm">
-                        <span className="font-semibold capitalize">{key}:</span>{" "}
-                        {typeof value === "object"
-                          ? JSON.stringify(value)
-                          : value}
-                      </p>
-                    )
-                  )}
+                  {inspection.camposFormateados.map((campo, index) => (
+                    <p key={index} className="text-sm">
+                      <span className="font-semibold capitalize">
+                        {campo.label}:
+                      </span>{" "}
+                      {campo.valorFormateado}
+                    </p>
+                  ))}
                 </div>
               )}
           </details>
