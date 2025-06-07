@@ -34,7 +34,7 @@ const Inspections = () => {
     const fetchTemplates = async () => {
       try {
         const res = await getInpectionTemplate(page, limit);
-        console.log("Respuesta con page", page, ":", res.data);
+        console.log("Respuesta con page", page, ":", res);
         setTemplates(res.data);
         setTotal(res.total);
       } catch (error) {
@@ -103,6 +103,7 @@ const Inspections = () => {
             placeholder={displayName}
             value={value}
             onChange={onChange}
+            className="w-2/4"
           />
         );
       case FieldType.Numero:
@@ -113,6 +114,7 @@ const Inspections = () => {
             placeholder={displayName}
             value={value}
             onChange={onChange}
+            className="w-2/4"
           />
         );
       case FieldType.Checkbox:
@@ -138,7 +140,12 @@ const Inspections = () => {
         );
       case FieldType.Opciones:
         return (
-          <select required={required} value={value} onChange={onChange}>
+          <select
+            required={required}
+            value={value}
+            onChange={onChange}
+            className="w-2/4"
+          >
             <option value="">Seleccione una opción</option>
             {options?.map((opt, i) => (
               <option key={i} value={opt}>
@@ -159,6 +166,7 @@ const Inspections = () => {
     e.preventDefault();
     const newErrors: { [fieldName: string]: string } = {};
     const formValues = formData[template.id!] || {};
+    const inspectionsType = formData[template.id!]?.inspectionsType;
 
     template.fields.forEach((field) => {
       if (
@@ -193,8 +201,10 @@ const Inspections = () => {
       title,
       date,
       inspectorId,
+      inspectionsType,
       templateId: template.id!,
       dynamicFields,
+      formType: "",
     };
 
     try {
@@ -230,24 +240,58 @@ const Inspections = () => {
           </summary>
           <p className="text-sm">
             {" "}
-            Fecha:
+            Fecha:&nbsp;
             {new Date().toLocaleDateString("es-CO", {
               day: "2-digit",
               month: "2-digit",
               year: "numeric",
             })}
           </p>{" "}
-          <p> </p>
+          <p className="text-sm">
+            {" "}
+            Tipo de Formulario:{""}&nbsp;
+            {template.formType &&
+              template.formType.charAt(0).toUpperCase() +
+                template.formType.slice(1)}
+          </p>
+          <p className="text-sm">
+            <span className="font-medium">Codigo:{""} &nbsp;</span>
+            {template.id}
+          </p>
           <form onSubmit={(e) => handleSubmit(e, template)}>
+            <div className="block mb-4">
+              <label className="mb-1 text-sm ">Tipo de inspección: {""}</label>
+              <select
+                required
+                className="w-2/4 p-1 mx-2 border "
+                value={formData[template.id!]?.inspectionsType || ""}
+                onChange={(e) =>
+                  handleChange(template.id!, "inspectionsType", e.target.value)
+                }
+              >
+                <option value="">Seleccione tipo</option>
+                <option value="planeada">Planeada</option>
+                <option value="espontanea">Espontánea</option>
+              </select>
+            </div>
             {template.fields.map((field, index) => (
               <div key={index} className="mb-4">
-                <label className="block mb-1 font-semibold">
-                  {field.displayName}
-                </label>
-                {renderField(template.id!, field, index)}
+                <div className="flex items-center gap-2">
+                  <label className="text-sm font-medium text-gray-700 ">
+                    {field.displayName}
+                    {field.required && (
+                      <span className="ml-1 text-red-500">*</span>
+                    )}
+                  </label>
+
+                  <div className="flex-1 ">
+                    {renderField(template.id!, field, index)}
+                  </div>
+                </div>
+
                 {errors[template.id!] &&
                   errors[template.id!][field.fieldName] && (
-                    <p className="mt-1 text-sm text-red-600">
+                    <p className="ml-[150px] mt-1 text-sm text-red-600">
                       {errors[template.id!][field.fieldName]}
                     </p>
                   )}
