@@ -31,9 +31,17 @@ export enum FieldType {
   Fecha = "date",
   Opciones = "dropdown",
 }
+export enum InspectionType {
+  WORK_AREAS = "areas y puestos de trabajo",
+  MACHINERY = "maquinaria y equipos",
+  PROTECTIVE_EQUIPMENT = "elementos de protección personal",
+  MEDICAL = "botiquines y camillas",
+}
 export interface IInspection {
   id?: string;
+  date: Date;
   fieldName: string;
+  inspectionType: InspectionType;
   displayName: string;
   type: FieldType;
   required: boolean;
