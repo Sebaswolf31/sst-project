@@ -9,10 +9,12 @@ import { InspectionTemplateController } from './inspection-template.controller';
 import { InspectionService } from './inspections.service';
 import { InspectionTemplateService } from './inspection-template.service';
 import { UsersModule } from 'src/users/users.module';
+import { CommonModule } from '../common/common.module';
 @Module({
   imports: [
     forwardRef(() => UsersModule),
     TypeOrmModule.forFeature([Inspection, InspectionTemplate, User]),
+    CommonModule,
   ],
   controllers: [InspectionController, InspectionTemplateController],
   providers: [InspectionService, InspectionTemplateService],

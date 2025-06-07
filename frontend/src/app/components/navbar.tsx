@@ -27,7 +27,7 @@ const Navbar = () => {
         </Link>
         {user ? (
           <p className="text-center">
-            ¡Hola, {user?.name.split(" ")[0] || "Usuario"}! 👋{" "}
+            ¡Hola, {user?.name.split(' ')[0] || "Usuario"}! 👋{' '}
           </p>
         ) : (
           <p className="text-center">
