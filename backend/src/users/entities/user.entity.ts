@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Company } from '../../company/entities/company.entity';
 import { Inspection } from '../../inspections/entities/inspection.entity';
-
+import { Exclude } from 'class-transformer';
 
 export enum UserRole {
   SUPERADMIN = 'superadmin',
@@ -35,6 +35,7 @@ export class User {
   email: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   @Column()
