@@ -205,5 +205,79 @@ export class InspectionService {
     return this.inspectionRepository.save(inspection);
   }
 
-  
+  // METODOS PARA GRAFICOS DE REQUERIDOS
+
+  /** 1. Conteo por plantilla */
+  async countByTemplate(): Promise<
+    { templateId: string; templateName: string; count: number }[]
+  > {
+    const raw = await this.inspectionRepository
+      .createQueryBuilder('i')
+      .select('i.templateId', 'templateId')
+      .addSelect('template.name', 'templateName')
+      .addSelect('COUNT(*)', 'count')
+      .leftJoin('i.template', 'template')
+      .groupBy('i.templateId')
+      .addGroupBy('template.name')
+      .getRawMany();
+
+    return raw.map((r) => ({
+      templateId: r.templateId,
+      templateName: r.templateName,
+      count: Number(r.count),
+    }));
+  }
+
+  /** 2. Conteo por tipo de formulario (formType) */
+  async countByFormType(): Promise<{ formType: FormType; count: number }[]> {
+    const raw = await this.inspectionRepository
+      .createQueryBuilder('i')
+      .select('i.formType', 'formType')
+      .addSelect('COUNT(*)', 'count')
+      .groupBy('i.formType')
+      .getRawMany();
+
+    return raw.map((r) => ({
+      formType: r.formType as FormType,
+      count: Number(r.count),
+    }));
+  }
+
+  /** 3. Conteo por tipo de inspección (inspectionType) */
+  async countByInspectionType(): Promise<
+    { inspectionType: InspectionType; count: number }[]
+  > {
+    const raw = await this.inspectionRepository
+      .createQueryBuilder('i')
+      .select('i.inspectionType', 'inspectionType')
+      .addSelect('COUNT(*)', 'count')
+      .groupBy('i.inspectionType')
+      .getRawMany();
+
+    return raw.map((r) => ({
+      inspectionType: r.inspectionType as InspectionType,
+      count: Number(r.count),
+    }));
+  }
+
+  /** 4. (Opcional) Vista combinada plantilla × tipo de inspección */
+  async countByTemplateAndInspectionType(): Promise<
+    { templateName: string; inspectionType: InspectionType; count: number }[]
+  > {
+    const raw = await this.inspectionRepository
+      .createQueryBuilder('i')
+      .select('template.name', 'templateName')
+      .addSelect('i.inspectionType', 'inspectionType')
+      .addSelect('COUNT(*)', 'count')
+      .leftJoin('i.template', 'template')
+      .groupBy('template.name')
+      .addGroupBy('i.inspectionType')
+      .getRawMany();
+
+    return raw.map((r) => ({
+      templateName: r.templateName,
+      inspectionType: r.inspectionType as InspectionType,
+      count: Number(r.count),
+    }));
+  }
 }

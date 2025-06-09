@@ -105,4 +105,26 @@ export class InspectionController {
     const filePath = await this.fileUploadService.saveFile(file, 'inspections');
     return this.inspectionService.updateAttachment(id, filePath);
   }
+
+  // CONTROLLERS PARA LOS GRAFICOS DE INSPECCIONES
+
+  @Get('reports/by-template')
+  getReportByTemplate() {
+    return this.inspectionService.countByTemplate();
+  }
+
+  @Get('reports/by-form-type')
+  getReportByFormType() {
+    return this.inspectionService.countByFormType();
+  }
+
+  @Get('reports/by-inspection-type')
+  getReportByInspectionType() {
+    return this.inspectionService.countByInspectionType();
+  }
+
+  @Get('reports/template-vs-inspection-type')
+  getReportTemplateVsInspectionType() {
+    return this.inspectionService.countByTemplateAndInspectionType();
+  }
 }
