@@ -42,3 +42,21 @@ export const getInspections = async (page: number, limit: number) => {
     }
   }
 };
+export const getInspectionsReportByTemplate = async () => {
+  try {
+    const response = await axiosApiBack.get("inspections/reports/by-template");
+    console.log("Respuesta de la API GET INSPECTIONS:", response.data);
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error("Error desde el backend:", error.response.data);
+      throw new Error(error.response.data.message || "Error desconocido");
+    } else if (axios.isAxiosError(error) && error.request) {
+      console.error("No hubo respuesta del servidor:", error.request);
+      throw new Error("No hubo respuesta del servidor");
+    } else {
+      console.error("Error inesperado:", (error as Error).message);
+      throw new Error((error as Error).message || "Error desconocido");
+    }
+  }
+};
