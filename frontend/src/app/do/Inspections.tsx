@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-
+import { useRef } from "react";
 import React, { useEffect, useState } from "react";
 import { getInpectionTemplate } from "../services/inspectiontemplates";
 import toast from "react-hot-toast";
@@ -11,7 +11,10 @@ import {
   IInspection,
   CreateInspection,
 } from "../interface";
-import { createInspection } from "../services/inspections";
+import {
+  createInspection,
+  createInspectionFile,
+} from "../services/inspections";
 import { useAuth } from "../contexts/authContext";
 
 const Inspections = () => {
@@ -29,6 +32,7 @@ const Inspections = () => {
   const [errors, setErrors] = useState<{
     [templateId: string]: { [fieldName: string]: string };
   }>({});
+  const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -166,7 +170,7 @@ const Inspections = () => {
     e.preventDefault();
     const newErrors: { [fieldName: string]: string } = {};
     const formValues = formData[template.id!] || {};
-    const inspectionsType = formData[template.id!]?.inspectionsType;
+    const inspectionType = formData[template.id!]?.inspectionType;
 
     template.fields.forEach((field) => {
       if (
@@ -195,22 +199,31 @@ const Inspections = () => {
     const date = new Date();
     const inspectorId = user?.id;
 
-    const dynamicFields = formData[template.id!] || {};
+    const dynamicFields = formValues;
+    const attachedFiles: File[] = formValues.files || [];
 
     const inspectionToSend: CreateInspection = {
       title,
       date,
       inspectorId,
-      inspectionsType,
+      inspectionType,
       templateId: template.id!,
       dynamicFields,
       formType: "",
     };
 
     try {
-      await createInspection(inspectionToSend);
+      const response = await createInspection(inspectionToSend);
       toast.success("Inspección guardada correctamente");
-
+      const inspectionId = response.id;
+      if (attachedFiles.length > 0) {
+        for (const file of attachedFiles) {
+          await createInspectionFile(file, inspectionId);
+        }
+      }
+      if (fileInputRefs.current[template.id!]) {
+        fileInputRefs.current[template.id!]!.value = "";
+      }
       setFormData((prev) => ({
         ...prev,
         [template.id!]: {},
@@ -264,9 +277,9 @@ const Inspections = () => {
               <select
                 required
                 className="w-2/4 p-1 mx-2 border "
-                value={formData[template.id!]?.inspectionsType || ""}
+                value={formData[template.id!]?.inspectionType || ""}
                 onChange={(e) =>
-                  handleChange(template.id!, "inspectionsType", e.target.value)
+                  handleChange(template.id!, "inspectionType", e.target.value)
                 }
               >
                 <option value="">Seleccione tipo</option>
@@ -297,6 +310,26 @@ const Inspections = () => {
                   )}
               </div>
             ))}
+            <div className="mb-4">
+              <label className="text-sm font-medium text-gray-700">
+                Adjuntar archivo
+              </label>
+              <input
+                type="file"
+                accept=".jpg,.jpeg,.png,.pdf"
+                multiple
+                ref={(el) => {
+                  fileInputRefs.current[template.id!] = el;
+                }}
+                onChange={(e) => {
+                  const files = e.target.files;
+                  if (files) {
+                    handleChange(template.id!, "files", Array.from(files));
+                  }
+                }}
+                className="block w-full mt-1"
+              />
+            </div>
             <button
               type="submit"
               className="px-3 py-2 mx-2 text-white rounded bg-blueP hover:bg-greenP"

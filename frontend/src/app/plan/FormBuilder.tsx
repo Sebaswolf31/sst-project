@@ -63,6 +63,7 @@ export default function FormBuilder() {
         date: new Date(),
         fields: cleanFields,
       };
+      console.log(InspectionTemplate);
       await createInpectionTemplate(InspectionTemplate);
       toast.success("Plantilla guardada");
       setFields([]);
@@ -111,8 +112,7 @@ export default function FormBuilder() {
           onChange={(e) =>
             setNewField({
               ...newField,
-              type: e.target.value as FieldType,
-              options: [],
+              inspectionType: e.target.value as InspectionType,
             })
           }
           className="block w-full col-span-2 p-2 border "
