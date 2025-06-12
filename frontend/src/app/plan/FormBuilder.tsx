@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { FieldType, InspectionType } from "../interface";
+import { FieldType, InspectionTypeForm } from "../interface";
 import { IInspection } from "../interface";
 import toast from "react-hot-toast";
 import { createInpectionTemplate } from "../services/inspectiontemplates";
@@ -14,7 +14,7 @@ export default function FormBuilder() {
     fieldName: "",
     displayName: "",
     date: "" as unknown as Date,
-    inspectionType: "" as InspectionType,
+    inspectionType: "" as InspectionTypeForm,
     type: "" as FieldType,
     required: false,
     options: [],
@@ -31,7 +31,7 @@ export default function FormBuilder() {
       fieldName: "",
       displayName: "",
       date: "" as unknown as Date,
-      inspectionType: "" as InspectionType,
+      inspectionType: "" as InspectionTypeForm,
       type: "" as FieldType,
       required: false,
       options: [],
@@ -72,7 +72,7 @@ export default function FormBuilder() {
         fieldName: "",
         displayName: "",
         date: "" as unknown as Date,
-        inspectionType: "" as InspectionType,
+        inspectionType: "" as InspectionTypeForm,
         type: FieldType.Texto,
         required: false,
         options: [],
@@ -112,7 +112,7 @@ export default function FormBuilder() {
           onChange={(e) =>
             setNewField({
               ...newField,
-              inspectionType: e.target.value as InspectionType,
+              inspectionType: e.target.value as InspectionTypeForm,
             })
           }
           className="block w-full col-span-2 p-2 border "
