@@ -280,4 +280,9 @@ export class InspectionService {
       count: Number(r.count),
     }));
   }
+
+  /** Devuelve el número total de inspecciones */
+  async countTotal(): Promise<number> {
+    return this.inspectionRepository.count();
+  }
 }
