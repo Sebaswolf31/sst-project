@@ -31,7 +31,7 @@ export enum FieldType {
   Fecha = "date",
   Opciones = "dropdown",
 }
-export enum InspectionType {
+export enum InspectionTypeForm {
   WORK_AREAS = "areas y puestos de trabajo",
   MACHINERY = "maquinaria y equipos",
   PROTECTIVE_EQUIPMENT = "elementos de protección personal",
@@ -41,7 +41,7 @@ export interface IInspection {
   id?: string;
   date: Date;
   fieldName: string;
-  inspectionType: InspectionType;
+  inspectionType: InspectionTypeForm;
   displayName: string;
   type: FieldType;
   required: boolean;
@@ -53,7 +53,8 @@ export interface CreateInspectionTemplateDto {
   name: string;
   fields: IInspection[];
   formType?: string;
-  inspectionsType?: InspectionType;
+  inspectionsType?: InspectionTypeForm;
+  file?: File;
 }
 export enum InspectionType {
   SPONTANEOUS = "espontanea",
@@ -66,7 +67,7 @@ export interface CreateInspection {
   inspectorId?: string;
   templateId: string;
   formType: string;
-  inspectionsType: InspectionType;
+  inspectionType: InspectionType;
   dynamicFields: Record<string, unknown>;
 }
 export interface DynamicField {
@@ -86,7 +87,17 @@ export interface IGetInspection {
   createdAt: Date;
   formType: string;
   inspectionType: string;
+  attachment: string | null;
 }
 export interface IFormattedInspection extends IGetInspection {
   camposFormateados: { key: string; valorFormateado: string; label: string }[];
+}
+export interface IinspectionByTemplate {
+  templateId: string;
+  templateName: string;
+  count: number;
+}
+export interface IInspectionByForm {
+  formType: string;
+  count: number;
 }

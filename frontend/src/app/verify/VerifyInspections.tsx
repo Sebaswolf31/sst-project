@@ -109,6 +109,21 @@ const VerifyInspections = () => {
             <p className="text-sm">
               <strong>Responsable: </strong> {inspection.inspector?.name}
             </p>
+            <p className="text-sm">
+              <strong>Adjunto: </strong>
+              {inspection.attachment ? (
+                <a
+                  href={inspection.attachment}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 underline hover:text-blue-800"
+                >
+                  Ver archivo
+                </a>
+              ) : (
+                "No hay archivos adjuntos"
+              )}
+            </p>
 
             {inspection.camposFormateados &&
               inspection.camposFormateados.length > 0 && (
