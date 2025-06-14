@@ -51,7 +51,7 @@ export interface IInspection {
 export interface CreateInspectionTemplateDto {
   id?: string;
   name: string;
-  fields: IInspection[];
+  fields: FieldDefinition[];
   formType?: string;
   inspectionsType?: InspectionTypeForm;
   file?: File;
@@ -100,4 +100,14 @@ export interface IinspectionByTemplate {
 export interface IInspectionByForm {
   formType: string;
   count: number;
+}
+
+
+
+export interface FieldDefinition {
+  fieldName: string;
+  displayName: string;
+  type: 'text' | 'number' | 'checkbox' | 'date' | 'dropdown';
+  required: boolean;
+  options?: string[];
 }

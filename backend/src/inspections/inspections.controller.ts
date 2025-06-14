@@ -127,4 +127,11 @@ export class InspectionController {
   getReportTemplateVsInspectionType() {
     return this.inspectionService.countByTemplateAndInspectionType();
   }
+
+  /** GET /inspections/reports/total */
+  @Get('reports/total')
+  async getTotalInspections(): Promise<{ total: number }> {
+    const total = await this.inspectionService.countTotal();
+    return { total };
+  }
 }
