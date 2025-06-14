@@ -23,6 +23,7 @@ const Inspections = () => {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
+  const [fileErrors, setFileErrors] = useState<Record<string, string>>({});
 
   const [formData, setFormData] = useState<{
     [templateId: string]: {
@@ -323,12 +324,49 @@ const Inspections = () => {
                 }}
                 onChange={(e) => {
                   const files = e.target.files;
+                  const validTypes = [
+                    "image/jpeg",
+                    "image/png",
+                    "application/pdf",
+                  ];
+                  const maxFileSize = 5 * 1024 * 1024;
+                  const errors: string[] = [];
+                  const validFiles: File[] = [];
+
                   if (files) {
-                    handleChange(template.id!, "files", Array.from(files));
+                    Array.from(files).forEach((file) => {
+                      if (!validTypes.includes(file.type)) {
+                        errors.push(`Archivo no válido: ${file.name}`);
+                      } else if (file.size > maxFileSize) {
+                        errors.push(
+                          `Archivo demasiado grande (>5MB): ${file.name}`
+                        );
+                      } else {
+                        validFiles.push(file);
+                      }
+                    });
+
+                    if (errors.length > 0) {
+                      setFileErrors((prev) => ({
+                        ...prev,
+                        [template.id!]: errors.join(", "),
+                      }));
+                    } else {
+                      setFileErrors((prev) => ({
+                        ...prev,
+                        [template.id!]: "",
+                      }));
+                      handleChange(template.id!, "files", validFiles);
+                    }
                   }
                 }}
                 className="block w-full mt-1"
               />
+              {fileErrors[template.id!] && (
+                <p className="mt-1 text-sm text-red-500">
+                  {fileErrors[template.id!]}
+                </p>
+              )}
             </div>
             <button
               type="submit"
