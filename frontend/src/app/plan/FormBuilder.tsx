@@ -1,38 +1,43 @@
-"use client";
-import React, { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { FieldType, InspectionTypeForm } from "../interface";
-import { IInspection } from "../interface";
-import toast from "react-hot-toast";
-import { createInpectionTemplate } from "../services/inspectiontemplates";
+'use client';
+import React, { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import toast from 'react-hot-toast';
+import {
+  FieldType,
+  InspectionTypeForm,
+  CreateInspectionTemplateDto,
+  IInspection,
+} from '../interface';
+import { createInpectionTemplate } from '../services/inspectiontemplates';
 
 export default function FormBuilder() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [inspectionName, setInspectionName] = useState("");
+  const [inspectionName, setInspectionName] = useState('');
+  const [formType, setFormType] = useState<InspectionTypeForm>(
+    InspectionTypeForm.WORK_AREAS,
+  );
   const [fields, setFields] = useState<IInspection[]>([]);
   const [newField, setNewField] = useState<IInspection>({
-    fieldName: "",
-    displayName: "",
-    date: "" as unknown as Date,
-    inspectionType: "" as InspectionTypeForm,
-    type: "" as FieldType,
+    fieldName: '',
+    displayName: '',
+    date: '' as unknown as Date,
+    inspectionType: InspectionTypeForm.WORK_AREAS,
+    type: FieldType.Texto,
     required: false,
     options: [],
   });
 
   const handleAddField = () => {
-    if (!newField.fieldName || !newField.fieldName) {
-      toast.error("Completa el nombre del campo");
+    if (!newField.fieldName) {
+      toast.error('Completa el nombre del campo');
       return;
     }
-
     setFields([...fields, { ...newField, id: uuidv4() }]);
     setNewField({
-      fieldName: "",
-      displayName: "",
-      date: "" as unknown as Date,
-      inspectionType: "" as InspectionTypeForm,
-      type: "" as FieldType,
+      fieldName: '',
+      displayName: '',
+      date: '' as unknown as Date,
+      inspectionType: InspectionTypeForm.WORK_AREAS,
+      type: FieldType.Texto,
       required: false,
       options: [],
     });
@@ -43,7 +48,7 @@ export default function FormBuilder() {
   };
 
   const handleAddOption = () => {
-    const label = prompt("Etiqueta de la opción:");
+    const label = prompt('Etiqueta de la opción:');
     if (label) {
       setNewField({
         ...newField,
@@ -54,82 +59,84 @@ export default function FormBuilder() {
 
   const handleSaveTemplate = async () => {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const cleanFields = fields.map(({ id, ...field }) => field);
-      const nameUpperCase =
-        inspectionName.charAt(0).toUpperCase() + inspectionName.slice(1);
-      const InspectionTemplate = {
-        name: nameUpperCase,
-        date: new Date(),
+      // Mapeo simple sin usar destructuring del id
+      const cleanFields = fields.map((f) => ({
+        fieldName: f.fieldName,
+        displayName: f.displayName,
+        type: f.type,
+        required: f.required,
+        options: f.options,
+      }));
+
+      const payload: CreateInspectionTemplateDto = {
+        name: inspectionName.trim(),
         fields: cleanFields,
+        formType,
       };
-      console.log(InspectionTemplate);
-      await createInpectionTemplate(InspectionTemplate);
-      toast.success("Plantilla guardada");
+
+      await createInpectionTemplate(payload);
+      toast.success('Plantilla guardada');
+
+      // reset form
+      setInspectionName('');
+      setFormType(InspectionTypeForm.WORK_AREAS);
       setFields([]);
-      setInspectionName("");
       setNewField({
-        fieldName: "",
-        displayName: "",
-        date: "" as unknown as Date,
-        inspectionType: "" as InspectionTypeForm,
+        fieldName: '',
+        displayName: '',
+        date: '' as unknown as Date,
+        inspectionType: InspectionTypeForm.WORK_AREAS,
         type: FieldType.Texto,
         required: false,
         options: [],
       });
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("Ocurrió un error inesperado");
-      }
+      // Usar tipo any en catch es innecesario; se maneja instancia de Error
+      const message =
+        error instanceof Error ? error.message : 'Error al guardar plantilla';
+      toast.error(message);
     }
   };
 
   return (
-    <div className="max-w-2xl p-4 m-4 mx-auto border rounded shadow-md">
-      <h2 className="mb-4 text-xl font-bold text-center">
+    <div className='max-w-2xl p-4 m-4 mx-auto border rounded shadow-md'>
+      <h2 className='mb-4 text-xl font-bold text-center'>
         Crear nueva plantilla
       </h2>
-      <p className="pb-2 pl-2 text-sm">
-        Creación Plantilla :{" "}
-        {new Date().toLocaleDateString("es-CO", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        })}
-      </p>{" "}
+
       <input
-        className="w-full gap-2 p-2 mb-4 border "
-        type="text"
-        placeholder=" Nombre de la plantilla de inspección"
+        className='w-full p-2 mb-4 border rounded'
+        type='text'
+        placeholder='Nombre de la plantilla'
         value={inspectionName}
         onChange={(e) => setInspectionName(e.target.value)}
-      ></input>
-      <div className="grid grid-cols-2 gap-2 mb-4">
-        <select
-          value={newField.inspectionType}
-          onChange={(e) =>
-            setNewField({
-              ...newField,
-              inspectionType: e.target.value as InspectionTypeForm,
-            })
-          }
-          className="block w-full col-span-2 p-2 border "
-        >
-          <option value=""> Tipo de plantilla de inspeccion</option>
-          <option value="areas y puestos de trabajo">
-            Areas y puestos de trabajo
-          </option>
-          <option value="maquinaria y equipos">Maquinaria y equipos</option>
-          <option value="elementos de protección personal">
-            Elementos de protección personal
-          </option>
-          <option value="botiquines y camillas">Botiquines y camillas</option>
-        </select>
+      />
+
+      {/* Select de FormType */}
+      <select
+        value={formType}
+        onChange={(e) => setFormType(e.target.value as InspectionTypeForm)}
+        className='w-full p-2 mb-4 border rounded'
+      >
+        <option value={InspectionTypeForm.WORK_AREAS}>
+          Áreas y puestos de trabajo
+        </option>
+        <option value={InspectionTypeForm.MACHINERY}>
+          Maquinaria y equipos
+        </option>
+        <option value={InspectionTypeForm.PROTECTIVE_EQUIPMENT}>
+          Elementos de protección personal
+        </option>
+        <option value={InspectionTypeForm.MEDICAL}>
+          Botiquines y camillas
+        </option>
+      </select>
+
+      {/* Campos dinámicos */}
+      <div className='grid grid-cols-2 gap-2 mb-4'>
         <input
-          type="text"
-          placeholder="Nombre del campo"
+          type='text'
+          placeholder='Nombre del campo'
           value={newField.displayName}
           onChange={(e) =>
             setNewField({
@@ -138,8 +145,9 @@ export default function FormBuilder() {
               fieldName: e.target.value,
             })
           }
-          className="p-2 border"
+          className='p-2 border rounded'
         />
+
         <select
           value={newField.type}
           onChange={(e) =>
@@ -149,75 +157,68 @@ export default function FormBuilder() {
               options: [],
             })
           }
-          className="p-2 border"
+          className='p-2 border rounded'
         >
-          <option value=""> Tipo de campo requerido</option>
-          <option value="text">Texto</option>
-          <option value="number">Número</option>
-          <option value="dropdown">Seleccionable</option>
-          <option value="checkbox">Checkbox</option>
-          <option value="date">Fecha</option>
+          <option value=''>Tipo de campo</option>
+          <option value={FieldType.Texto}>Texto</option>
+          <option value={FieldType.Numero}>Número</option>
+          <option value={FieldType.Opciones}>Seleccionable</option>
+          <option value={FieldType.Checkbox}>Checkbox</option>
+          <option value={FieldType.Fecha}>Fecha</option>
         </select>
-        <label className="flex items-center">
+
+        <label className='flex items-center'>
           <input
-            type="checkbox"
+            type='checkbox'
             checked={newField.required}
             onChange={(e) =>
               setNewField({ ...newField, required: e.target.checked })
             }
-            className="mr-2"
+            className='mr-2'
           />
-          Campo Requerido
+          Campo requerido
         </label>
-        {newField.type === "dropdown" && (
+
+        {newField.type === FieldType.Opciones && (
           <button
-            type="button"
+            type='button'
             onClick={handleAddOption}
-            className="col-span-2 p-2 text-white rounded bg-blueP"
+            className='col-span-2 p-2 text-white rounded bg-blueP'
           >
             Añadir opción
           </button>
         )}
       </div>
-      {newField.options && newField.options.length > 0 && (
-        <div className="mb-4">
-          <p className="text-sm font-medium">Opciones:</p>
-          <ul className="pl-5 text-sm list-disc">
-            {newField.options.map((opt, i) => (
-              <li key={i}>{opt}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+
       <button
-        type="button"
+        type='button'
         onClick={handleAddField}
-        className="block w-full p-2 mx-auto mb-6 text-white rounded bg-blueP"
+        className='w-full p-2 mb-4 text-white rounded bg-blueP'
       >
-        Añadir campo a la plantilla
+        Añadir campo
       </button>
-      <h3 className="mb-2 text-lg font-semibold">Campos actuales:</h3>
-      <ul className="mb-4">
-        {fields.map((field) => (
-          <li key={field.id} className="flex items-center justify-between mb-1">
+
+      {/* Listado de campos */}
+      <ul className='mb-4'>
+        {fields.map((f) => (
+          <li key={f.id} className='flex justify-between items-center mb-2'>
             <span>
-              <strong>{field.displayName}</strong> ({field.displayName}) -{" "}
-              {field.type}
-              {field.required ? " *" : ""}
+              {f.displayName} ({f.type})
             </span>
             <button
-              className="text-sm text-red-600"
-              onClick={() => handleRemoveField(field.id!)}
+              onClick={() => handleRemoveField(f.id!)}
+              className='text-red-600'
             >
               Eliminar
             </button>
           </li>
         ))}
       </ul>
+
       <button
-        type="button"
+        type='button'
         onClick={handleSaveTemplate}
-        className="block px-4 py-2 mx-auto text-white rounded bg-greenP"
+        className='w-full px-4 py-2 text-white bg-green-600 rounded'
       >
         Guardar Plantilla
       </button>

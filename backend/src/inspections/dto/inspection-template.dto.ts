@@ -1,6 +1,7 @@
 // inspections/dto/inspection-template.dto.ts
-import { IsNotEmpty, IsArray, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsArray, ValidateNested, IsEnum } from 'class-validator';
 import { Type } from 'class-transformer';
+import { FormType } from '../enums/form-type.enum';
 
 class DynamicFieldDefinitionDto {
   @IsNotEmpty()
@@ -27,5 +28,6 @@ export class CreateInspectionTemplateDto {
   @Type(() => DynamicFieldDefinitionDto)
   fields: DynamicFieldDefinitionDto[];
 
-  
+  @IsEnum(FormType)
+  formType: FormType;
 }

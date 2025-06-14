@@ -14,7 +14,7 @@ import { DynamicFieldDefinition } from './entities/inspection-template.entity';
 import { UserRole } from '../users/entities/user.entity';
 import { FilterInspectionDto } from './dto/update-inspection.dto';
 import { UpdateInspectionDto } from './dto/update-inspection.dto';
-import {  InspectionType } from './entities/inspection.entity';
+import { InspectionType } from './entities/inspection.entity';
 import { FileUploadService } from '../common/file-upload.service';
 import { FormType } from './enums/form-type.enum';
 
@@ -60,7 +60,6 @@ export class InspectionService {
 
     return this.inspectionRepository.save({
       ...dto,
-      formType: template.formType, // Heredar de la plantilla
       inspector: { id: dto.inspectorId },
       template: { id: dto.templateId },
     });

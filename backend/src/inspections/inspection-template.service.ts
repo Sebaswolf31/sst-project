@@ -15,8 +15,8 @@ export class InspectionTemplateService {
   async createTemplate(
     dto: CreateInspectionTemplateDto,
   ): Promise<InspectionTemplate> {
-    // Usar el constructor de la entidad
-    const template = new InspectionTemplate({
+    // Crea la entidad pasando formType en el nivel superior, no dentro de fields
+    const template = this.templateRepository.create({
       name: dto.name,
       fields: dto.fields.map((f) => ({
         fieldName: f.fieldName,
@@ -25,11 +25,11 @@ export class InspectionTemplateService {
         required: f.required,
         options: f.options,
       })),
+      formType: dto.formType, // ← aquí
     });
 
     return this.templateRepository.save(template);
   }
-
   async getTemplateById(id: string): Promise<InspectionTemplate> {
     const template = await this.templateRepository.findOne({
       where: { id },
