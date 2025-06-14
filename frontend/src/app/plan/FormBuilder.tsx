@@ -180,13 +180,27 @@ export default function FormBuilder() {
         </label>
 
         {newField.type === FieldType.Opciones && (
-          <button
-            type='button'
-            onClick={handleAddOption}
-            className='col-span-2 p-2 text-white rounded bg-blueP'
-          >
-            Añadir opción
-          </button>
+          <>
+            {/* Botón para lanzar el prompt y agregar una nueva opción */}
+            <button
+              type='button'
+              onClick={handleAddOption}
+              className='col-span-2 p-2 text-white rounded bg-blueP'
+            >
+              Añadir opción
+            </button>
+
+            {/* Si ya hay opciones en el estado, las listamos aquí */}
+            {newField.options && newField.options.length > 0 && (
+              <ul className='col-span-2 pl-4 mt-2 mb-4 list-disc'>
+                {newField.options.map((opt, idx) => (
+                  <li key={idx} className='text-sm'>
+                    {opt}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
         )}
       </div>
 
