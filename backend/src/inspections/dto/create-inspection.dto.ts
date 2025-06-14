@@ -28,6 +28,9 @@ export class CreateInspectionDto {
 
   // Nuevos campos
 
+  @IsEnum(FormType)
+  formType: FormType;
+
   @IsEnum(InspectionType)
   inspectionType: InspectionType;
 
