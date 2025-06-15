@@ -1,21 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-"use client";
-import { useRef } from "react";
-import React, { useEffect, useState } from "react";
-import { getInpectionTemplate } from "../services/inspectiontemplates";
-import toast from "react-hot-toast";
+'use client';
+import { useRef } from 'react';
+import React, { useEffect, useState } from 'react';
+import { getInpectionTemplate } from '../services/inspectiontemplates';
+import toast from 'react-hot-toast';
 import {
   CreateInspectionTemplateDto,
   FieldType,
   IInspection,
   CreateInspection,
-} from "../interface";
+} from '../interface';
 import {
   createInspection,
   createInspectionFile,
-} from "../services/inspections";
-import { useAuth } from "../contexts/authContext";
+} from '../services/inspections';
+import { useAuth } from '../contexts/authContext';
+import { FieldDefinition } from '../interface';
 
 const Inspections = () => {
   const [templates, setTemplates] = useState<CreateInspectionTemplateDto[]>([]);
@@ -38,12 +39,12 @@ const Inspections = () => {
     const fetchTemplates = async () => {
       try {
         const res = await getInpectionTemplate(page, limit);
-        console.log("Respuesta con page", page, ":", res);
+        console.log('Respuesta con page', page, ':', res);
         setTemplates(res.data);
         setTotal(res.total);
       } catch (error) {
-        console.error("Error al cargar plantillas:", error);
-        toast.error("Error al traer plantillas");
+        console.error('Error al cargar plantillas:', error);
+        toast.error('Error al traer plantillas');
       }
     };
 
@@ -77,17 +78,17 @@ const Inspections = () => {
 
   const renderField = (
     templateId: string,
-    field: IInspection,
-    index: number
+    field: FieldDefinition,
+    index: number,
   ) => {
     const { type, displayName, required, options, fieldName } = field;
 
     const value =
       formData[templateId]?.[fieldName] ??
-      (type === FieldType.Checkbox ? false : "");
+      (type === FieldType.Checkbox ? false : '');
 
     const onChange = (
-      e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+      e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     ) => {
       let val: any;
       if (type === FieldType.Checkbox) {
@@ -98,45 +99,47 @@ const Inspections = () => {
       handleChange(templateId, fieldName, val);
     };
 
+    console.log('Dropdown field options:', field.fieldName, field.options);
+
     switch (type) {
       case FieldType.Texto:
         return (
           <input
-            type="text"
+            type='text'
             required={required}
             placeholder={displayName}
             value={value}
             onChange={onChange}
-            className="w-2/4"
+            className='w-2/4'
           />
         );
       case FieldType.Numero:
         return (
           <input
-            type="number"
+            type='number'
             required={required}
             placeholder={displayName}
             value={value}
             onChange={onChange}
-            className="w-2/4"
+            className='w-2/4'
           />
         );
       case FieldType.Checkbox:
         return (
           <label>
             <input
-              type="checkbox"
+              type='checkbox'
               required={required}
               checked={value}
               onChange={onChange}
-            />{" "}
+            />{' '}
             {displayName}
           </label>
         );
       case FieldType.Fecha:
         return (
           <input
-            type="date"
+            type='date'
             required={required}
             value={value}
             onChange={onChange}
@@ -148,9 +151,9 @@ const Inspections = () => {
             required={required}
             value={value}
             onChange={onChange}
-            className="w-2/4"
+            className='w-2/4'
           >
-            <option value="">Seleccione una opción</option>
+            <option value=''>Seleccione una opción</option>
             {options?.map((opt, i) => (
               <option key={i} value={opt}>
                 {opt}
@@ -163,9 +166,14 @@ const Inspections = () => {
     }
   };
 
+  if (!user?.id) {
+    toast.error('Debes iniciar sesión para guardar la inspección');
+    return;
+  }
+
   const handleSubmit = async (
     e: React.FormEvent,
-    template: CreateInspectionTemplateDto
+    template: CreateInspectionTemplateDto,
   ) => {
     e.preventDefault();
     const newErrors: { [fieldName: string]: string } = {};
@@ -176,7 +184,7 @@ const Inspections = () => {
       if (
         field.required &&
         (formValues[field.fieldName] === undefined ||
-          formValues[field.fieldName] === "" ||
+          formValues[field.fieldName] === '' ||
           formValues[field.fieldName] === null)
       ) {
         newErrors[field.fieldName] = `${field.displayName} es obligatorio`;
@@ -197,7 +205,7 @@ const Inspections = () => {
     }));
     const title = template.name;
     const date = new Date();
-    const inspectorId = user?.id;
+    const inspectorId = user.id;
 
     const dynamicFields = formValues;
     const attachedFiles: File[] = formValues.files || [];
@@ -206,15 +214,15 @@ const Inspections = () => {
       title,
       date,
       inspectorId,
-      inspectionType,
+      inspectionType: formValues.inspectionType,
       templateId: template.id!,
       dynamicFields,
-      formType: "",
+      formType: template.formType!,
     };
 
     try {
       const response = await createInspection(inspectionToSend);
-      toast.success("Inspección guardada correctamente");
+      toast.success('Inspección guardada correctamente');
       const inspectionId = response.id;
       if (attachedFiles.length > 0) {
         for (const file of attachedFiles) {
@@ -222,101 +230,101 @@ const Inspections = () => {
         }
       }
       if (fileInputRefs.current[template.id!]) {
-        fileInputRefs.current[template.id!]!.value = "";
+        fileInputRefs.current[template.id!]!.value = '';
       }
       setFormData((prev) => ({
         ...prev,
         [template.id!]: {},
       }));
     } catch (error) {
-      toast.error("Error al guardar inspección");
+      toast.error('Error al guardar inspección');
     }
   };
 
   return (
-    <div className="w-auto p-4 ">
-      <h1 className="text-2xl font-semibold text-center text-gray-800 ">
-        {" "}
+    <div className='w-auto p-4 '>
+      <h1 className='text-2xl font-semibold text-center text-gray-800 '>
+        {' '}
         Realizar Inspecciones
       </h1>
-      <p className="mb-2 text-xs font-thin text-center text-gray-800 ">
+      <p className='mb-2 text-xs font-thin text-center text-gray-800 '>
         Realiza inspecciones detalladas y precisas para garantizar la calidad y
         seguridad de tus procesos.
       </p>
       {templates.map((template) => (
         <details
           key={template.id}
-          className="p-4 mb-4 border border-gray-300 rounded-md bg-gray-50"
+          className='p-4 mb-4 border border-gray-300 rounded-md bg-gray-50'
         >
-          <summary className="font-semibold cursor-pointer">
+          <summary className='font-semibold cursor-pointer'>
             {template.name}
           </summary>
-          <p className="text-sm">
-            {" "}
+          <p className='text-sm'>
+            {' '}
             Fecha:&nbsp;
-            {new Date().toLocaleDateString("es-CO", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
+            {new Date().toLocaleDateString('es-CO', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
             })}
-          </p>{" "}
-          <p className="text-sm">
-            {" "}
-            Tipo de Formulario:{""}&nbsp;
+          </p>{' '}
+          <p className='text-sm'>
+            {' '}
+            Tipo de Formulario:{''}&nbsp;
             {template.formType &&
               template.formType.charAt(0).toUpperCase() +
                 template.formType.slice(1)}
           </p>
-          <p className="text-sm">
-            <span className="font-medium">Codigo:{""} &nbsp;</span>
+          <p className='text-sm'>
+            <span className='font-medium'>Codigo:{''} &nbsp;</span>
             {template.id}
           </p>
           <form onSubmit={(e) => handleSubmit(e, template)}>
-            <div className="block mb-4">
-              <label className="mb-1 text-sm ">Tipo de inspección: {""}</label>
+            <div className='block mb-4'>
+              <label className='mb-1 text-sm '>Tipo de inspección: {''}</label>
               <select
                 required
-                className="w-2/4 p-1 mx-2 border "
-                value={formData[template.id!]?.inspectionType || ""}
+                className='w-2/4 p-1 mx-2 border '
+                value={formData[template.id!]?.inspectionType || ''}
                 onChange={(e) =>
-                  handleChange(template.id!, "inspectionType", e.target.value)
+                  handleChange(template.id!, 'inspectionType', e.target.value)
                 }
               >
-                <option value="">Seleccione tipo</option>
-                <option value="planeada">Planeada</option>
-                <option value="espontanea">Espontánea</option>
+                <option value=''>Seleccione tipo</option>
+                <option value='planeada'>Planeada</option>
+                <option value='espontanea'>Espontánea</option>
               </select>
             </div>
             {template.fields.map((field, index) => (
-              <div key={index} className="mb-4">
-                <div className="flex items-center gap-2">
-                  <label className="text-sm font-medium text-gray-700 ">
+              <div key={index} className='mb-4'>
+                <div className='flex items-center gap-2'>
+                  <label className='text-sm font-medium text-gray-700 '>
                     {field.displayName}
                     {field.required && (
-                      <span className="ml-1 text-red-500">*</span>
+                      <span className='ml-1 text-red-500'>*</span>
                     )}
                   </label>
 
-                  <div className="flex-1 ">
+                  <div className='flex-1 '>
                     {renderField(template.id!, field, index)}
                   </div>
                 </div>
 
                 {errors[template.id!] &&
                   errors[template.id!][field.fieldName] && (
-                    <p className="ml-[150px] mt-1 text-sm text-red-600">
+                    <p className='ml-[150px] mt-1 text-sm text-red-600'>
                       {errors[template.id!][field.fieldName]}
                     </p>
                   )}
               </div>
             ))}
-            <div className="mb-4">
-              <label className="text-sm font-medium text-gray-700">
+            <div className='mb-4'>
+              <label className='text-sm font-medium text-gray-700'>
                 Adjuntar archivo
               </label>
               <input
-                type="file"
-                accept=".jpg,.jpeg,.png,.pdf"
+                type='file'
+                accept='.jpg,.jpeg,.png,.pdf'
                 multiple
                 ref={(el) => {
                   fileInputRefs.current[template.id!] = el;
@@ -324,21 +332,21 @@ const Inspections = () => {
                 onChange={(e) => {
                   const files = e.target.files;
                   if (files) {
-                    handleChange(template.id!, "files", Array.from(files));
+                    handleChange(template.id!, 'files', Array.from(files));
                   }
                 }}
-                className="block w-full mt-1"
+                className='block w-full mt-1'
               />
             </div>
             <button
-              type="submit"
-              className="px-3 py-2 mx-2 text-white rounded bg-blueP hover:bg-greenP"
+              type='submit'
+              className='px-3 py-2 mx-2 text-white rounded bg-blueP hover:bg-greenP'
             >
               Guardar cambios
             </button>
             <button
-              type="button"
-              className="px-3 py-2 mx-2 text-sm text-white bg-red-500 rounded"
+              type='button'
+              className='px-3 py-2 mx-2 text-sm text-white bg-red-500 rounded'
               onClick={() => handleCancel(template.id!)}
             >
               Cancelar
@@ -346,18 +354,18 @@ const Inspections = () => {
           </form>
         </details>
       ))}
-      <div className="flex justify-center gap-2 mt-4">
+      <div className='flex justify-center gap-2 mt-4'>
         <button
           onClick={goToPreviousPage}
           disabled={page === 1}
-          className="px-2 py-1 text-xs text-white rounded bg-blueP hover:bg-greenP"
+          className='px-2 py-1 text-xs text-white rounded bg-blueP hover:bg-greenP'
         >
           Anterior
         </button>
         <button
           onClick={goToNextPage}
           disabled={page * limit >= total}
-          className="px-2 py-1 text-xs text-white rounded bg-blueP hover:bg-greenP"
+          className='px-2 py-1 text-xs text-white rounded bg-blueP hover:bg-greenP'
         >
           Siguiente
         </button>

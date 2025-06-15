@@ -1,5 +1,12 @@
 // inspections/dto/inspection-template.dto.ts
-import { IsNotEmpty, IsArray, ValidateNested, IsEnum } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsArray,
+  ValidateNested,
+  IsEnum,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { FormType } from '../enums/form-type.enum';
 
@@ -16,6 +23,9 @@ class DynamicFieldDefinitionDto {
   @IsNotEmpty()
   required: boolean;
 
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   options?: string[];
 }
 
