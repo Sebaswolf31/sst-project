@@ -16,6 +16,7 @@ import {
   createInspectionFile,
 } from "../services/inspections";
 import { useAuth } from "../contexts/authContext";
+import { FieldDefinition } from "../interface";
 
 const Inspections = () => {
   const [templates, setTemplates] = useState<CreateInspectionTemplateDto[]>([]);
@@ -78,7 +79,7 @@ const Inspections = () => {
 
   const renderField = (
     templateId: string,
-    field: IInspection,
+    field: FieldDefinition,
     index: number
   ) => {
     const { type, displayName, required, options, fieldName } = field;
@@ -98,6 +99,8 @@ const Inspections = () => {
       }
       handleChange(templateId, fieldName, val);
     };
+
+    console.log("Dropdown field options:", field.fieldName, field.options);
 
     switch (type) {
       case FieldType.Texto:
@@ -164,6 +167,11 @@ const Inspections = () => {
     }
   };
 
+  if (!user?.id) {
+    toast.error("Debes iniciar sesión para guardar la inspección");
+    return;
+  }
+
   const handleSubmit = async (
     e: React.FormEvent,
     template: CreateInspectionTemplateDto
@@ -198,7 +206,7 @@ const Inspections = () => {
     }));
     const title = template.name;
     const date = new Date();
-    const inspectorId = user?.id;
+    const inspectorId = user.id;
 
     const dynamicFields = formValues;
     const attachedFiles: File[] = formValues.files || [];
@@ -207,10 +215,10 @@ const Inspections = () => {
       title,
       date,
       inspectorId,
-      inspectionType,
+      inspectionType: formValues.inspectionType,
       templateId: template.id!,
       dynamicFields,
-      formType: "",
+      formType: template.formType!,
     };
 
     try {
@@ -334,30 +342,7 @@ const Inspections = () => {
                   const validFiles: File[] = [];
 
                   if (files) {
-                    Array.from(files).forEach((file) => {
-                      if (!validTypes.includes(file.type)) {
-                        errors.push(`Archivo no válido: ${file.name}`);
-                      } else if (file.size > maxFileSize) {
-                        errors.push(
-                          `Archivo demasiado grande (>5MB): ${file.name}`
-                        );
-                      } else {
-                        validFiles.push(file);
-                      }
-                    });
-
-                    if (errors.length > 0) {
-                      setFileErrors((prev) => ({
-                        ...prev,
-                        [template.id!]: errors.join(", "),
-                      }));
-                    } else {
-                      setFileErrors((prev) => ({
-                        ...prev,
-                        [template.id!]: "",
-                      }));
-                      handleChange(template.id!, "files", validFiles);
-                    }
+                    handleChange(template.id!, "files", Array.from(files));
                   }
                 }}
                 className="block w-full mt-1"
