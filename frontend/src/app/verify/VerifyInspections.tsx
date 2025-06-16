@@ -67,14 +67,9 @@ const VerifyInspections = () => {
   };
   return (
     <div className="w-auto p-4">
-      <h1 className="text-2xl font-semibold text-center text-gray-800">
-        Verifica Inspecciones
+      <h1 className="pb-4 text-2xl font-semibold text-center">
+        Listado de Inspecciones
       </h1>
-      <p className="mb-2 text-xs font-thin text-center text-gray-800">
-        Consulta todas las inspecciones realizadas y accede a las estadísticas
-        clave de tu empresa para tomar decisiones informadas.
-      </p>
-
       {inspections.length === 0 ? (
         <p>No hay inspecciones para mostrar.</p>
       ) : (
@@ -128,16 +123,22 @@ const VerifyInspections = () => {
             {inspection.camposFormateados &&
               inspection.camposFormateados.length > 0 && (
                 <div className="pl-4 mt-2">
-                  {inspection.camposFormateados.map((campo, index) => (
-                    <p key={index} className="text-sm">
-                      <span className="font-semibold capitalize">
-                        {campo.label}:
-                      </span>{" "}
-                      {campo.valorFormateado &&
-                        campo.valorFormateado.charAt(0).toUpperCase() +
-                          campo.valorFormateado.slice(1)}
-                    </p>
-                  ))}
+                  {inspection.camposFormateados
+                    .filter(
+                      (campo) =>
+                        campo.label !== "inspectionType" &&
+                        campo.label !== "files"
+                    )
+                    .map((campo, index) => (
+                      <p key={index} className="text-sm">
+                        <span className="font-semibold capitalize">
+                          {campo.label}:
+                        </span>{" "}
+                        {campo.valorFormateado &&
+                          campo.valorFormateado.charAt(0).toUpperCase() +
+                            campo.valorFormateado.slice(1)}
+                      </p>
+                    ))}
                 </div>
               )}
           </details>

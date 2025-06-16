@@ -101,13 +101,18 @@ export interface IInspectionByForm {
   formType: string;
   count: number;
 }
-
-
+export interface ITotalReport {
+  total: number;
+}
+export interface IByInspectionType {
+  inspectionType: string;
+  count: number;
+}
 
 export interface FieldDefinition {
   fieldName: string;
   displayName: string;
-  type: 'text' | 'number' | 'checkbox' | 'date' | 'dropdown';
+  type: "text" | "number" | "checkbox" | "date" | "dropdown";
   required: boolean;
   options?: string[];
 }
