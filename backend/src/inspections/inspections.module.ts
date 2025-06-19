@@ -14,7 +14,7 @@ import { CommonModule } from '../common/common.module';
   imports: [
     forwardRef(() => UsersModule),
     TypeOrmModule.forFeature([Inspection, InspectionTemplate, User]),
-    CommonModule,
+    CommonModule, forwardRef(() => UsersModule),
   ],
   controllers: [InspectionController, InspectionTemplateController],
   providers: [InspectionService, InspectionTemplateService],
