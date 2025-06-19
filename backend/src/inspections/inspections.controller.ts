@@ -11,11 +11,14 @@ import {
   DefaultValuePipe,
   ParseIntPipe,
   Delete,
+  UseGuards,
   HttpCode,
   HttpStatus,
   UseInterceptors,
   BadRequestException,
   UploadedFile,
+  Req,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InspectionService } from './inspections.service';
 import { CreateInspectionDto } from './dto/create-inspection.dto';
@@ -24,8 +27,13 @@ import { FilterInspectionDto } from './dto/update-inspection.dto';
 import { UpdateInspectionDto } from './dto/update-inspection.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileUploadService } from '../common/file-upload.service';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '../users/entities/user.entity';
 
 @Controller('inspections')
+@UseGuards(AuthGuard, RolesGuard)
 export class InspectionController {
   constructor(
     private readonly inspectionService: InspectionService,
@@ -33,18 +41,33 @@ export class InspectionController {
   ) {}
 
   @Post()
-  create(@Body() dto: CreateInspectionDto): Promise<Inspection> {
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR, UserRole.OPERATOR)
+  create(
+    @Body() dto: CreateInspectionDto,
+    @Req() req: any,
+  ): Promise<Inspection> {
+    if (req.user.role === UserRole.INSPECTOR) {
+      dto.inspectorId = req.user.id;
+    }
     return this.inspectionService.createInspection(dto);
   }
 
   @Get('inspector/:inspectorId')
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR, UserRole.OPERATOR)
   getByInspector(
     @Param('inspectorId', ParseUUIDPipe) inspectorId: string,
+    @Req() req,
   ): Promise<Inspection[]> {
+    if (req.user.role !== UserRole.OPERATOR || req.user.id !== inspectorId) {
+      throw new ForbiddenException(
+        'No puedes ver inspecciones de otro usuario',
+      );
+    }
     return this.inspectionService.getInspectionsByInspector(inspectorId);
   }
 
   @Get()
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
   async findAll(
     @Query() filter: FilterInspectionDto,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
@@ -54,25 +77,57 @@ export class InspectionController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Inspection> {
-    return this.inspectionService.findOne(id);
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: any,
+  ): Promise<Inspection> {
+    const inspection = await this.inspectionService.findOne(id);
+    if (
+      req.user.role === UserRole.INSPECTOR &&
+      inspection.inspectorId !== req.user.id
+    ) {
+      throw new ForbiddenException('No puedes ver esta inspección');
+    }
+    return inspection;
   }
 
   @Patch(':id')
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateInspectionDto: UpdateInspectionDto,
+    @Req() req,
   ): Promise<Inspection> {
+    const inspection = await this.inspectionService.findOne(id);
+    if (
+      req.user.role === UserRole.INSPECTOR &&
+      inspection.inspectorId !== req.user.id
+    ) {
+      throw new ForbiddenException('No puedes actualizar esta inspección');
+    }
     return this.inspectionService.update(id, updateInspectionDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
+  async remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req,
+  ): Promise<void> {
+    const inspection = await this.inspectionService.findOne(id);
+    if (
+      req.user.role === UserRole.INSPECTOR &&
+      inspection.inspectorId !== req.user.id
+    ) {
+      throw new ForbiddenException('No puedes eliminar esta inspección');
+    }
     return this.inspectionService.remove(id);
   }
 
   @Post(':id/attachment')
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
   @UseInterceptors(FileInterceptor('file'))
   async uploadAttachment(
     @Param('id', ParseUUIDPipe) id: string,
@@ -97,6 +152,7 @@ export class InspectionController {
   }
 
   @Patch(':id/attachment')
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
   @UseInterceptors(FileInterceptor('file'))
   async updateAttachment(
     @Param('id', ParseUUIDPipe) id: string,
@@ -109,27 +165,32 @@ export class InspectionController {
   // CONTROLLERS PARA LOS GRAFICOS DE INSPECCIONES
 
   @Get('reports/by-template')
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
   getReportByTemplate() {
     return this.inspectionService.countByTemplate();
   }
 
   @Get('reports/by-form-type')
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
   getReportByFormType() {
     return this.inspectionService.countByFormType();
   }
 
   @Get('reports/by-inspection-type')
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
   getReportByInspectionType() {
     return this.inspectionService.countByInspectionType();
   }
 
   @Get('reports/template-vs-inspection-type')
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
   getReportTemplateVsInspectionType() {
     return this.inspectionService.countByTemplateAndInspectionType();
   }
 
   /** GET /inspections/reports/total */
   @Get('reports/total')
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
   async getTotalInspections(): Promise<{ total: number }> {
     const total = await this.inspectionService.countTotal();
     return { total };
