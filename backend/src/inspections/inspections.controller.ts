@@ -127,7 +127,7 @@ export class InspectionController {
   }
 
   @Post(':id/attachment')
-  @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR, UserRole.OPERATOR)
   @UseInterceptors(FileInterceptor('file'))
   async uploadAttachment(
     @Param('id', ParseUUIDPipe) id: string,
@@ -152,7 +152,7 @@ export class InspectionController {
   }
 
   @Patch(':id/attachment')
-  @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR, UserRole.OPERATOR)
   @UseInterceptors(FileInterceptor('file'))
   async updateAttachment(
     @Param('id', ParseUUIDPipe) id: string,
