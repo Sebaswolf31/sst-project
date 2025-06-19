@@ -26,7 +26,7 @@ export class InspectionTemplateController {
 
   @Post()
   @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
-  create(
+  async create(
     @Body() dto: CreateInspectionTemplateDto,
   ): Promise<InspectionTemplate> {
     return this.templateService.createTemplate(dto);
@@ -34,7 +34,7 @@ export class InspectionTemplateController {
 
   @Get(':id')
   @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
-  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<InspectionTemplate> {
+ async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<InspectionTemplate> {
     return this.templateService.getTemplateById(id);
   }
 
