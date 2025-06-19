@@ -42,7 +42,7 @@ export class InspectionController {
 
   @Post()
   @Roles(UserRole.ADMIN, UserRole.INSPECTOR, UserRole.OPERATOR)
-  create(
+  async create(
     @Body() dto: CreateInspectionDto,
     @Req() req: any,
   ): Promise<Inspection> {
@@ -54,7 +54,7 @@ export class InspectionController {
 
   @Get('inspector/:inspectorId')
   @Roles(UserRole.ADMIN, UserRole.INSPECTOR, UserRole.OPERATOR)
-  getByInspector(
+  async getByInspector(
     @Param('inspectorId', ParseUUIDPipe) inspectorId: string,
     @Req() req,
   ): Promise<Inspection[]> {
@@ -166,25 +166,25 @@ export class InspectionController {
 
   @Get('reports/by-template')
   @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
-  getReportByTemplate() {
+  async getReportByTemplate() {
     return this.inspectionService.countByTemplate();
   }
 
   @Get('reports/by-form-type')
   @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
-  getReportByFormType() {
+  async getReportByFormType() {
     return this.inspectionService.countByFormType();
   }
 
   @Get('reports/by-inspection-type')
   @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
-  getReportByInspectionType() {
+  async getReportByInspectionType() {
     return this.inspectionService.countByInspectionType();
   }
 
   @Get('reports/template-vs-inspection-type')
   @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
-  getReportTemplateVsInspectionType() {
+  async getReportTemplateVsInspectionType() {
     return this.inspectionService.countByTemplateAndInspectionType();
   }
 
