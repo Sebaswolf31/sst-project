@@ -4,9 +4,16 @@ import { CreateInspection } from "../interface";
 const axiosApiBack = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
-export const createInspection = async (inspection: CreateInspection) => {
+export const createInspection = async (
+  inspection: CreateInspection,
+  token: string
+) => {
   try {
-    const response = await axiosApiBack.post("/inspections", inspection);
+    const response = await axiosApiBack.post("/inspections", inspection, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     console.log("Respuesta de la API CREATEINSPECTIONS:", response.data);
     return response.data;
   } catch (error: unknown) {
@@ -24,14 +31,20 @@ export const createInspection = async (inspection: CreateInspection) => {
 };
 export const createInspectionFile = async (
   file: File,
-  inspectionId: string
+  inspectionId: string,
+  token: string
 ) => {
   const formData = new FormData();
   formData.append("file", file);
   try {
     const inspectionFile = await axiosApiBack.post(
       `inspections/${inspectionId}/attachment`,
-      formData
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     console.log(inspectionFile);
     return inspectionFile.data;

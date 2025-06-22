@@ -34,12 +34,19 @@ export const createInpectionTemplate = async (
     }
   }
 };
-export const getInpectionTemplate = async (page: number, limit: number) => {
+export const getInpectionTemplate = async (
+  page: number,
+  limit: number,
+  token: string
+) => {
   try {
     const params: Record<string, string | number> = { page, limit };
 
     const response = await axiosApiBack.get("/inspection-templates", {
       params,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
     return response.data;
   } catch (error: unknown) {
