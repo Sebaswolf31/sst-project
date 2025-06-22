@@ -27,7 +27,7 @@ const Navbar = () => {
         </Link>
         {user ? (
           <p className="text-center">
-            ¡Hola, {user?.name.split(' ')[0] || "Usuario"}! 👋{' '}
+            ¡Hola, {user?.name.split(" ")[0] || "Usuario"}! 👋{" "}
           </p>
         ) : (
           <p className="text-center">
@@ -58,15 +58,6 @@ const Navbar = () => {
                 Usuarios
               </Link>
               <Link href={routes.companies}>Empresas</Link>
-
-              <Link href={routes.home}>Planear</Link>
-              <Link href={routes.home}>Hacer</Link>
-
-              <Link href={routes.home}>Verificar</Link>
-
-              <Link href={routes.act} className="transition hover:text-verde">
-                Actuar
-              </Link>
             </div>
           )}
           {isAdmin(user) && (
@@ -80,10 +71,10 @@ const Navbar = () => {
               >
                 Usuarios
               </Link>
-              <Link href={routes.home}>Planear</Link>
+              <Link href={routes.plan}>Planear</Link>
 
-              <Link href={routes.home}>Hacer</Link>
-              <Link href={routes.home}>Verificar</Link>
+              <Link href={routes.do}>Hacer</Link>
+              <Link href={routes.verify}>Verificar</Link>
 
               <Link href={routes.act}>Actuar</Link>
             </div>
@@ -112,18 +103,8 @@ const Navbar = () => {
               <Link href={routes.home} className="transition hover:text-verde">
                 Inicio
               </Link>
-              <Link href={routes.home} className="transition hover:text-verde">
-                isOperator 1
-              </Link>
-              <Link href={routes.home}>isOperator 2</Link>
-
-              <Link href={routes.home}>isOperator 3</Link>
-              <Link href={routes.home}>isOperator 4</Link>
-
-              <Link href={routes.home}>isOperator 5</Link>
-
-              <Link href={routes.act} className="transition hover:text-verde">
-                isOperator 6
+              <Link href={routes.do} className="transition hover:text-verde">
+                Hacer Inspecciones{" "}
               </Link>
             </div>
           )}
