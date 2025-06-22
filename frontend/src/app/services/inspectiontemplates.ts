@@ -5,12 +5,18 @@ const axiosApiBack = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
 export const createInpectionTemplate = async (
-  InspectionTemplate: CreateInspectionTemplateDto
+  InspectionTemplate: CreateInspectionTemplateDto,
+  token: string
 ) => {
   try {
     const response = await axiosApiBack.post(
       "/inspection-templates",
-      InspectionTemplate
+      InspectionTemplate,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     if (response.status === 200) {
       console.log("Exito", response.data);
