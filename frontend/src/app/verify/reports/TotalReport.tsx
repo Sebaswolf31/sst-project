@@ -10,7 +10,14 @@ const TotalReport = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getInspectionsReport();
+        const token = localStorage.getItem("access_token");
+        console.log("Token desde localStorage:", token);
+
+        if (!token) {
+          toast.error("No hay token disponible");
+          return;
+        }
+        const res = await getInspectionsReport(token);
         setTotal(res);
       } catch (error: unknown) {
         if (error instanceof Error) {

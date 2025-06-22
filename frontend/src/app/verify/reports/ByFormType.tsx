@@ -3,6 +3,7 @@
 import { IInspection, IInspectionByForm } from "@/app/interface";
 import { getInspectionsReportByFormType } from "@/app/services/inspections";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import {
   BarChart,
   Bar,
@@ -20,7 +21,14 @@ const ByFormType = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getInspectionsReportByFormType();
+        const token = localStorage.getItem("access_token");
+        console.log("Token desde localStorage:", token);
+
+        if (!token) {
+          toast.error("No hay token disponible");
+          return;
+        }
+        const res = await getInspectionsReportByFormType(token);
         console.log("GetinspectionsByform", res);
         setInspectionsByFormType(res);
       } catch (error: unknown) {}

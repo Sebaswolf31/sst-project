@@ -3,6 +3,7 @@
 import { IByInspectionType } from "@/app/interface";
 import { getReportByInspectionType } from "@/app/services/inspections";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import {
   BarChart,
   Bar,
@@ -18,7 +19,14 @@ const ByInspectionType = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getReportByInspectionType();
+        const token = localStorage.getItem("access_token");
+        console.log("Token desde localStorage:", token);
+
+        if (!token) {
+          toast.error("No hay token disponible");
+          return;
+        }
+        const res = await getReportByInspectionType(token);
         console.log("GetinspectionsByTYPE", res);
         setInspectionType(res);
       } catch (error: unknown) {}

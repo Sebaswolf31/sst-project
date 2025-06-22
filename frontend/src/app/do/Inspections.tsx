@@ -39,7 +39,14 @@ const Inspections = () => {
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
-        const res = await getInpectionTemplate(page, limit);
+        const token = localStorage.getItem("access_token");
+        console.log("Token desde localStorage:", token);
+
+        if (!token) {
+          toast.error("No hay token disponible");
+          return;
+        }
+        const res = await getInpectionTemplate(page, limit, token);
         console.log("Respuesta con page", page, ":", res);
         setTemplates(res.data);
         setTotal(res.total);
@@ -222,12 +229,19 @@ const Inspections = () => {
     };
 
     try {
-      const response = await createInspection(inspectionToSend);
+      const token = localStorage.getItem("access_token");
+      console.log("Token desde localStorage:", token);
+
+      if (!token) {
+        toast.error("No hay token disponible");
+        return;
+      }
+      const response = await createInspection(inspectionToSend, token);
       toast.success("Inspección guardada correctamente");
       const inspectionId = response.id;
       if (attachedFiles.length > 0) {
         for (const file of attachedFiles) {
-          await createInspectionFile(file, inspectionId);
+          await createInspectionFile(file, inspectionId, token);
         }
       }
       if (fileInputRefs.current[template.id!]) {
