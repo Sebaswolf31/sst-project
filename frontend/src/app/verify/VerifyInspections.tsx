@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { getInspections } from "../services/inspections";
 import { FieldType, IFormattedInspection, IGetInspection } from "../interface";
+import toast from "react-hot-toast";
 
 const formatearInspeccion = (inspeccion: IGetInspection) => {
   const camposFormateados = Object.entries(inspeccion.dynamicFields).map(
@@ -50,7 +51,14 @@ const VerifyInspections = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await getInspections(page, limit);
+      const token = localStorage.getItem("access_token");
+      console.log("Token desde localStorage:", token);
+
+      if (!token) {
+        toast.error("No hay token disponible");
+        return;
+      }
+      const res = await getInspections(page, limit, token);
       console.log("Respuesta con page", page, ":", res.data);
       const inspeccionesFormateadas = res.data.map(formatearInspeccion);
       setInspections(inspeccionesFormateadas);

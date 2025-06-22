@@ -21,7 +21,14 @@ const ByTemplate = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await getInspectionsReportByTemplate();
+        const token = localStorage.getItem("access_token");
+        console.log("Token desde localStorage:", token);
+
+        if (!token) {
+          toast.error("No hay token disponible");
+          return;
+        }
+        const res = await getInspectionsReportByTemplate(token);
         console.log("Respuesta get inspection by template:", res);
         setInspectionsByTemplate(res);
       } catch (error: unknown) {

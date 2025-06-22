@@ -62,11 +62,20 @@ export const createInspectionFile = async (
   }
 };
 
-export const getInspections = async (page: number, limit: number) => {
+export const getInspections = async (
+  page: number,
+  limit: number,
+  token: string
+) => {
   try {
     const params: Record<string, string | number> = { page, limit };
 
-    const response = await axiosApiBack.get("/inspections", { params });
+    const response = await axiosApiBack.get("/inspections", {
+      params,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     console.log("Respuesta de la API GET INSPECTIONS:", response.data);
     return response.data;
   } catch (error: unknown) {
@@ -82,9 +91,13 @@ export const getInspections = async (page: number, limit: number) => {
     }
   }
 };
-export const getInspectionsReportByTemplate = async () => {
+export const getInspectionsReportByTemplate = async (token: string) => {
   try {
-    const response = await axiosApiBack.get("inspections/reports/by-template");
+    const response = await axiosApiBack.get("inspections/reports/by-template", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response) {
@@ -99,9 +112,16 @@ export const getInspectionsReportByTemplate = async () => {
     }
   }
 };
-export const getInspectionsReportByFormType = async () => {
+export const getInspectionsReportByFormType = async (token: string) => {
   try {
-    const response = await axiosApiBack.get("inspections/reports/by-form-type");
+    const response = await axiosApiBack.get(
+      "inspections/reports/by-form-type",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     console.log("Respuesta de la API GET INSPECTIONSBY FORM:", response.data);
     return response.data;
   } catch (error: unknown) {
@@ -117,10 +137,15 @@ export const getInspectionsReportByFormType = async () => {
     }
   }
 };
-export const getReportByInspectionType = async () => {
+export const getReportByInspectionType = async (token: string) => {
   try {
     const response = await axiosApiBack.get(
-      "inspections/reports/by-inspection-type"
+      "inspections/reports/by-inspection-type",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     console.log("Respuesta de la API GET INSPECTIONS TOTAL:", response.data);
     return response.data;
@@ -137,9 +162,13 @@ export const getReportByInspectionType = async () => {
     }
   }
 };
-export const getInspectionsReport = async () => {
+export const getInspectionsReport = async (token: string) => {
   try {
-    const response = await axiosApiBack.get("inspections/reports/total");
+    const response = await axiosApiBack.get("inspections/reports/total", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     console.log("Respuesta de la API GET INSPECTIONS TOTAL:", response.data);
     return response.data;
   } catch (error: unknown) {
