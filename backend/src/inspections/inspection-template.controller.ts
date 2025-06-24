@@ -33,13 +33,15 @@ export class InspectionTemplateController {
   }
 
   @Get(':id')
-  @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
- async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<InspectionTemplate> {
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR, UserRole.OPERATOR)
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<InspectionTemplate> {
     return this.templateService.getTemplateById(id);
   }
 
   @Get()
-  @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
+  @Roles(UserRole.ADMIN, UserRole.INSPECTOR, UserRole.OPERATOR)
   async getAllTemplates(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
