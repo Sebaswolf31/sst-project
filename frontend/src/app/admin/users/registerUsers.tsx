@@ -42,6 +42,7 @@ const roleOptions = [
   { value: "", label: "Seleccione un rol" },
   { value: UserRole.RolAdministrador, label: "Administrador" },
   { value: UserRole.RolOperario, label: "Operador" },
+  { value: UserRole.RolInspector, label: "Inspector" },
 ];
 const RegisterUser = () => {
   const { user } = useAuth();
