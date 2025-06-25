@@ -13,11 +13,18 @@ import {
   isSuperAdmin,
   isInpector,
 } from "@/app/helpers/authhelpers";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { isAuth, resetUserData, user } = useAuth();
+  const router = useRouter(); // 👈 Inicializa el router
+
   console.log(user, "userennavbar");
+  const handleLogout = () => {
+    resetUserData();
+    router.push(routes.home); // 👈 Redirige manualmente
+  };
 
   return (
     <div className="z-40 text-white top-4 bg-blueP ">
@@ -84,12 +91,7 @@ const Navbar = () => {
               <Link href={routes.home} className="transition hover:text-verde">
                 Inicio
               </Link>
-              <Link
-                href={routes.userAdmin}
-                className="transition hover:text-verde"
-              >
-                Usuarios
-              </Link>
+
               <Link href={routes.plan}>Planear</Link>
 
               <Link href={routes.do}>Hacer</Link>
@@ -112,9 +114,7 @@ const Navbar = () => {
           <div>
             {isAuth ? (
               <span
-                onClick={() => {
-                  resetUserData();
-                }}
+                onClick={handleLogout}
                 className="flex items-center gap-2 transition cursor-pointer hover:text-verde"
               >
                 <IoIosLogOut />
