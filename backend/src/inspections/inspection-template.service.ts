@@ -1,5 +1,9 @@
 // inspection-template.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateInspectionTemplateDto } from './dto/inspection-template.dto';
@@ -14,6 +18,7 @@ export class InspectionTemplateService {
 
   async createTemplate(
     dto: CreateInspectionTemplateDto,
+    user: { id: string; companyId: string },
   ): Promise<InspectionTemplate> {
     // Crea la entidad pasando formType en el nivel superior, no dentro de fields
     const template = this.templateRepository.create({
@@ -26,32 +31,33 @@ export class InspectionTemplateService {
         options: f.options,
       })),
       formType: dto.formType, // ← aquí
+      companyId: user.companyId,
+      createdById: user.id,
     });
 
     return this.templateRepository.save(template);
   }
-  async getTemplateById(id: string): Promise<InspectionTemplate> {
+  async getTemplateById(
+    id: string,
+    companyId: string,
+  ): Promise<InspectionTemplate> {
     const template = await this.templateRepository.findOne({
-      where: { id },
-      // Forzar el tipo de retorno
-      cache: false,
+      where: { id, companyId },
     });
-
     if (!template) {
-      throw new NotFoundException(`Template con ID ${id} no encontrado`);
+      throw new ForbiddenException('No puedes acceder a esta plantilla');
     }
-
     return template;
   }
 
-  async getAllTemplates(pagination: {
-    page: number;
-    limit: number;
-  }): Promise<{ data: InspectionTemplate[]; total: number }> {
+  async getAllTemplatesForCompany(
+    companyId: string,
+    { page, limit }: { page: number; limit: number },
+  ): Promise<{ data: InspectionTemplate[]; total: number }> {
     const [data, total] = await this.templateRepository.findAndCount({
-      skip: (pagination.page - 1) * pagination.limit,
-      take: pagination.limit,
-      order: { createdAt: 'DESC' },
+      where: { companyId },
+      skip: (page - 1) * limit,
+      take: limit,
     });
 
     return { data, total };

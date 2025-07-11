@@ -37,4 +37,8 @@ export class CreateInspectionDto {
   @IsOptional()
   @IsString()
   attachment?: string; // Almacenará la ruta del archivo
+
+  @IsUUID()
+  @IsOptional()
+  companyId?: string; // 👈 AGREGA ESTE CAMPO
 }

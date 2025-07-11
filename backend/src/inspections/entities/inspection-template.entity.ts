@@ -4,8 +4,13 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { FormType } from '../enums/form-type.enum'; // Asegúrate de que este enum esté definido en tu entidad de inspección
+
+import { User } from '../../users/entities/user.entity';
+import { Company } from '../../company/entities/company.entity';
 
 @Entity()
 export class InspectionTemplate {
@@ -34,7 +39,23 @@ export class InspectionTemplate {
     default: FormType.WORK_AREAS,
   })
   formType: FormType;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'createdById' })
+  createdBy: User;
+
+  @Column({ type: 'uuid' })
+  createdById: string;
+
+  @ManyToOne(() => Company)
+  @JoinColumn({ name: 'companyId' })
+  company: Company;
+
+  @Column({ type: 'uuid' })
+  companyId: string;
 }
+
+
 
 export interface DynamicFieldDefinition {
   fieldName: string;

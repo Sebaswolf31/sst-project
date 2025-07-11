@@ -45,6 +45,7 @@ export class User {
     type: 'enum',
     enum: UserRole,
     default: UserRole.OPERATOR,
+    select: true,
   })
   role: UserRole;
 
