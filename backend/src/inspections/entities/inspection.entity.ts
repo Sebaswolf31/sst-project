@@ -10,6 +10,7 @@ import {
 import { User } from '../../users/entities/user.entity';
 import { InspectionTemplate } from './inspection-template.entity';
 import { FormType } from '../enums/form-type.enum';
+import { Company } from '../../company/entities/company.entity';
 export { FormType }; // <-- agrega esto
 
 export enum InspectionType {
@@ -70,4 +71,11 @@ export class Inspection {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column({ type: 'uuid' })
+  companyId: string;
+
+  @ManyToOne(() => Company)
+  @JoinColumn({ name: 'companyId' })
+  company: Company;
 }

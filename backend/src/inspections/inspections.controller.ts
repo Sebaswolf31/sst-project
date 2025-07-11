@@ -46,9 +46,14 @@ export class InspectionController {
     @Body() dto: CreateInspectionDto,
     @Req() req: any,
   ): Promise<Inspection> {
+    dto.companyId = req.user.companyId; // 👈 aquí se la pasamos
+
     if (req.user.role === UserRole.INSPECTOR) {
       dto.inspectorId = req.user.id;
+    } else if (!dto.inspectorId) {
+      dto.inspectorId = req.user.id; // también puede ser admin/operator como creador
     }
+
     return this.inspectionService.createInspection(dto);
   }
 
@@ -72,23 +77,34 @@ export class InspectionController {
     @Query() filter: FilterInspectionDto,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Req() req,
   ): Promise<{ data: Inspection[]; total: number }> {
-    return this.inspectionService.findAll(filter, { page, limit });
+    return this.inspectionService.findAll(
+      filter,
+      { page, limit },
+      req.user.companyId,
+    );
   }
 
   @Get(':id')
   @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
-    @Req() req: any,
+    @Req() req,
   ): Promise<Inspection> {
-    const inspection = await this.inspectionService.findOne(id);
+    const inspection = await this.inspectionService.findOne(
+      id,
+      req.user.companyId,
+    );
+
+    // Si el usuario es inspector, solo puede ver sus inspecciones
     if (
       req.user.role === UserRole.INSPECTOR &&
       inspection.inspectorId !== req.user.id
     ) {
       throw new ForbiddenException('No puedes ver esta inspección');
     }
+
     return inspection;
   }
 
@@ -99,14 +115,21 @@ export class InspectionController {
     @Body() updateInspectionDto: UpdateInspectionDto,
     @Req() req,
   ): Promise<Inspection> {
-    const inspection = await this.inspectionService.findOne(id);
+    const inspection = await this.inspectionService.findOne(
+      id,
+      req.user.companyId,
+    );
     if (
       req.user.role === UserRole.INSPECTOR &&
       inspection.inspectorId !== req.user.id
     ) {
       throw new ForbiddenException('No puedes actualizar esta inspección');
     }
-    return this.inspectionService.update(id, updateInspectionDto);
+    return this.inspectionService.update(
+      id,
+      updateInspectionDto,
+      req.user.companyId,
+    );
   }
 
   @Delete(':id')
@@ -116,14 +139,17 @@ export class InspectionController {
     @Param('id', ParseUUIDPipe) id: string,
     @Req() req,
   ): Promise<void> {
-    const inspection = await this.inspectionService.findOne(id);
+    const inspection = await this.inspectionService.findOne(
+      id,
+      req.user.companyId,
+    );
     if (
       req.user.role === UserRole.INSPECTOR &&
       inspection.inspectorId !== req.user.id
     ) {
       throw new ForbiddenException('No puedes eliminar esta inspección');
     }
-    return this.inspectionService.remove(id);
+    return this.inspectionService.remove(id, req.user.companyId);
   }
 
   @Post(':id/attachment')
@@ -132,6 +158,7 @@ export class InspectionController {
   async uploadAttachment(
     @Param('id', ParseUUIDPipe) id: string,
     @UploadedFile() file: Express.Multer.File,
+    @Req() req,
   ) {
     if (!file) {
       throw new BadRequestException('No se ha subido ningún archivo');
@@ -145,7 +172,11 @@ export class InspectionController {
         allowedTypes,
       );
 
-      return this.inspectionService.updateAttachment(id, filePath);
+      return this.inspectionService.updateAttachment(
+        id,
+        filePath,
+        req.user.companyId,
+      );
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -157,42 +188,49 @@ export class InspectionController {
   async updateAttachment(
     @Param('id', ParseUUIDPipe) id: string,
     @UploadedFile() file: Express.Multer.File,
+    @Req() req,
   ): Promise<Inspection> {
     const filePath = await this.fileUploadService.saveFile(file, 'inspections');
-    return this.inspectionService.updateAttachment(id, filePath);
+    return this.inspectionService.updateAttachment(
+      id,
+      filePath,
+      req.user.companyId,
+    );
   }
 
   // CONTROLLERS PARA LOS GRAFICOS DE INSPECCIONES
 
   @Get('reports/by-template')
   @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
-  async getReportByTemplate() {
-    return this.inspectionService.countByTemplate();
+  async getReportByTemplate(@Req() req: any) {
+    return this.inspectionService.countByTemplate(req.user.companyId);
   }
 
   @Get('reports/by-form-type')
   @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
-  async getReportByFormType() {
-    return this.inspectionService.countByFormType();
+  async getReportByFormType(@Req() req: any) {
+    return this.inspectionService.countByFormType(req.user.companyId);
   }
 
   @Get('reports/by-inspection-type')
   @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
-  async getReportByInspectionType() {
-    return this.inspectionService.countByInspectionType();
+  async getReportByInspectionType(@Req() req: any) {
+    return this.inspectionService.countByInspectionType(req.user.companyId);
   }
 
   @Get('reports/template-vs-inspection-type')
   @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
-  async getReportTemplateVsInspectionType() {
-    return this.inspectionService.countByTemplateAndInspectionType();
+  async getReportTemplateVsInspectionType(@Req() req: any) {
+    return this.inspectionService.countByTemplateAndInspectionType(
+      req.user.companyId,
+    );
   }
 
   /** GET /inspections/reports/total */
   @Get('reports/total')
   @Roles(UserRole.ADMIN, UserRole.INSPECTOR)
-  async getTotalInspections(): Promise<{ total: number }> {
-    const total = await this.inspectionService.countTotal();
+  async getTotalInspections(@Req() req: any): Promise<{ total: number }> {
+    const total = await this.inspectionService.countTotal(req.user.companyId);
     return { total };
   }
 }

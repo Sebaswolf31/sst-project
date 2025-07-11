@@ -3,6 +3,8 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Req,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -40,15 +42,16 @@ export class InspectionService {
         where: { id: dto.templateId },
       }),
     ]);
+    console.log('INSPECTOR DESDE BD:', inspector);
 
     if (!inspector) throw new NotFoundException('Inspector no encontrado');
     if (!template) throw new NotFoundException('Plantilla no encontrada');
 
-    if (inspector.role !== UserRole.INSPECTOR) {
-      throw new BadRequestException(
-        'Solo usuarios con rol inspector pueden crear inspecciones',
-      );
-    }
+    // if (inspector.role !== UserRole.INSPECTOR) {
+    //   throw new BadRequestException(
+    //     'Solo usuarios con rol inspector pueden crear inspecciones',
+    //   );
+    // }
 
     // Añadir validación para los nuevos campos
 
@@ -62,6 +65,7 @@ export class InspectionService {
       ...dto,
       inspector: { id: dto.inspectorId },
       template: { id: dto.templateId },
+      companyId: dto.companyId, // 👈 asegúrate de pasarla desde el controlador
     });
   }
 
@@ -114,6 +118,7 @@ export class InspectionService {
   async findAll(
     filter: FilterInspectionDto,
     pagination: { page: number; limit: number },
+    companyId: string,
   ): Promise<{ data: Inspection[]; total: number }> {
     const query = this.inspectionRepository
       .createQueryBuilder('inspection')
@@ -134,6 +139,8 @@ export class InspectionService {
       });
     }
 
+    // Filtro por empresa (seguridad)
+    query.andWhere('inspector.companyId = :companyId', { companyId });
     // Paginación
     const [data, total] = await query
       .skip((pagination.page - 1) * pagination.limit)
@@ -143,7 +150,7 @@ export class InspectionService {
     return { data, total };
   }
 
-  async findOne(id: string): Promise<Inspection> {
+  async findOne(id: string, companyId: string): Promise<Inspection> {
     const inspection = await this.inspectionRepository.findOne({
       where: { id },
       relations: ['inspector', 'template'],
@@ -152,12 +159,21 @@ export class InspectionService {
     if (!inspection) {
       throw new NotFoundException('Inspección no encontrada');
     }
+    if (inspection.inspector?.companyId !== companyId) {
+      throw new ForbiddenException(
+        'No tienes permiso para ver esta inspección',
+      );
+    }
 
     return inspection;
   }
 
-  async update(id: string, dto: UpdateInspectionDto): Promise<Inspection> {
-    const inspection = await this.findOne(id);
+  async update(
+    id: string,
+    dto: UpdateInspectionDto,
+    companyId: string,
+  ): Promise<Inspection> {
+    const inspection = await this.findOne(id, companyId);
 
     // Validar plantilla si se actualiza
     if (dto.templateId) {
@@ -184,16 +200,22 @@ export class InspectionService {
     });
   }
 
-  async remove(id: string): Promise<void> {
-    const result = await this.inspectionRepository.delete(id);
+  async remove(id: string, companyId: string): Promise<void> {
+    // Verificamos que la inspección pertenezca a la empresa
+    const inspection = await this.findOne(id, companyId);
 
+    const result = await this.inspectionRepository.delete(inspection.id);
     if (result.affected === 0) {
       throw new NotFoundException('Inspección no encontrada');
     }
   }
 
-  async updateAttachment(id: string, filePath: string): Promise<Inspection> {
-    const inspection = await this.findOne(id);
+  async updateAttachment(
+    id: string,
+    filePath: string,
+    companyId: string,
+  ): Promise<Inspection> {
+    const inspection = await this.findOne(id, companyId);
 
     // Eliminar archivo anterior si existe
     if (inspection.attachment) {
@@ -207,15 +229,16 @@ export class InspectionService {
   // METODOS PARA GRAFICOS DE REQUERIDOS
 
   /** 1. Conteo por plantilla */
-  async countByTemplate(): Promise<
-    { templateId: string; templateName: string; count: number }[]
-  > {
+  async countByTemplate(
+    companyId: string,
+  ): Promise<{ templateId: string; templateName: string; count: number }[]> {
     const raw = await this.inspectionRepository
       .createQueryBuilder('i')
       .select('i.templateId', 'templateId')
       .addSelect('template.name', 'templateName')
       .addSelect('COUNT(*)', 'count')
       .leftJoin('i.template', 'template')
+      .where('i.companyId = :companyId', { companyId }) // 👈 filtro por empresa
       .groupBy('i.templateId')
       .addGroupBy('template.name')
       .getRawMany();
@@ -228,11 +251,14 @@ export class InspectionService {
   }
 
   /** 2. Conteo por tipo de formulario (formType) */
-  async countByFormType(): Promise<{ formType: FormType; count: number }[]> {
+  async countByFormType(
+    companyId: string,
+  ): Promise<{ formType: FormType; count: number }[]> {
     const raw = await this.inspectionRepository
       .createQueryBuilder('i')
       .select('i.formType', 'formType')
       .addSelect('COUNT(*)', 'count')
+      .where('i.companyId = :companyId', { companyId }) // 👈 filtro por empresa
       .groupBy('i.formType')
       .getRawMany();
 
@@ -243,13 +269,14 @@ export class InspectionService {
   }
 
   /** 3. Conteo por tipo de inspección (inspectionType) */
-  async countByInspectionType(): Promise<
-    { inspectionType: InspectionType; count: number }[]
-  > {
+  async countByInspectionType(
+    companyId: string,
+  ): Promise<{ inspectionType: InspectionType; count: number }[]> {
     const raw = await this.inspectionRepository
       .createQueryBuilder('i')
       .select('i.inspectionType', 'inspectionType')
       .addSelect('COUNT(*)', 'count')
+      .where('i.companyId = :companyId', { companyId }) // 👈 filtro por empresa
       .groupBy('i.inspectionType')
       .getRawMany();
 
@@ -260,7 +287,9 @@ export class InspectionService {
   }
 
   /** 4. (Opcional) Vista combinada plantilla × tipo de inspección */
-  async countByTemplateAndInspectionType(): Promise<
+  async countByTemplateAndInspectionType(
+    companyId: string,
+  ): Promise<
     { templateName: string; inspectionType: InspectionType; count: number }[]
   > {
     const raw = await this.inspectionRepository
@@ -269,6 +298,7 @@ export class InspectionService {
       .addSelect('i.inspectionType', 'inspectionType')
       .addSelect('COUNT(*)', 'count')
       .leftJoin('i.template', 'template')
+      .where('i.companyId = :companyId', { companyId }) // 👈 filtro por empresa
       .groupBy('template.name')
       .addGroupBy('i.inspectionType')
       .getRawMany();
@@ -281,7 +311,10 @@ export class InspectionService {
   }
 
   /** Devuelve el número total de inspecciones */
-  async countTotal(): Promise<number> {
-    return this.inspectionRepository.count();
+  /** Devuelve el número total de inspecciones */
+  async countTotal(companyId: string): Promise<number> {
+    return this.inspectionRepository.count({
+      where: { companyId },
+    });
   }
 }

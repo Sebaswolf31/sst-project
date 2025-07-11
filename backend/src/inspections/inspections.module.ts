@@ -10,11 +10,13 @@ import { InspectionService } from './inspections.service';
 import { InspectionTemplateService } from './inspection-template.service';
 import { UsersModule } from 'src/users/users.module';
 import { CommonModule } from '../common/common.module';
+import { Company } from 'src/company/entities/company.entity';
 @Module({
   imports: [
     forwardRef(() => UsersModule),
-    TypeOrmModule.forFeature([Inspection, InspectionTemplate, User]),
-    CommonModule, forwardRef(() => UsersModule),
+    TypeOrmModule.forFeature([Inspection, InspectionTemplate, User, Company]),
+    CommonModule,
+    forwardRef(() => UsersModule),
   ],
   controllers: [InspectionController, InspectionTemplateController],
   providers: [InspectionService, InspectionTemplateService],
